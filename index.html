@@ -1,724 +1,240 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OMFID - Discover Menus Near You</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: #f8f9fa;
-            min-height: 100vh;
-        }
-        
-        /* Header */
-        .header {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-        
-        .header-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 15px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .logo {
-            font-size: 28px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-decoration: none;
-        }
-        
-        .search-bar {
-            flex: 1;
-            max-width: 500px;
-            margin: 0 30px;
-            position: relative;
-        }
-        
-        .search-input {
-            width: 100%;
-            padding: 12px 45px 12px 20px;
-            border: 2px solid #e0e0e0;
-            border-radius: 30px;
-            font-size: 16px;
-            transition: all 0.3s;
-        }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-        
-        .search-btn {
-            position: absolute;
-            right: 5px;
-            top: 50%;
-            transform: translateY(-50%);
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            width: 35px;
-            height: 35px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .header-actions {
-            display: flex;
-            gap: 15px;
-        }
-        
-        .btn {
-            padding: 10px 20px;
-            border-radius: 25px;
-            border: none;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.3s;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .btn-secondary {
-            background: white;
-            color: #333;
-            border: 2px solid #e0e0e0;
-        }
-        
-        .btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        /* Hero Section */
-        .hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 60px 20px;
-            text-align: center;
-        }
-        
-        .hero h1 {
-            font-size: 48px;
-            margin-bottom: 20px;
-            animation: fadeInUp 0.8s ease;
-        }
-        
-        .hero p {
-            font-size: 20px;
-            opacity: 0.9;
-            max-width: 600px;
-            margin: 0 auto 30px;
-            animation: fadeInUp 0.8s ease 0.2s both;
-        }
-        
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        .location-picker {
-            background: white;
-            color: #333;
-            padding: 15px 30px;
-            border-radius: 30px;
-            border: none;
-            font-size: 16px;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            animation: fadeInUp 0.8s ease 0.4s both;
-        }
-        
-        /* Category Pills */
-        .categories {
-            background: white;
-            padding: 20px;
-            border-bottom: 1px solid #e0e0e0;
-            position: sticky;
-            top: 70px;
-            z-index: 90;
-        }
-        
-        .categories-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            gap: 15px;
-            overflow-x: auto;
-            padding-bottom: 5px;
-        }
-        
-        .category-pill {
-            padding: 10px 20px;
-            background: #f5f5f5;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: all 0.3s;
-            font-size: 14px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-        
-        .category-pill:hover {
-            background: #e0e0e0;
-            transform: translateY(-2px);
-        }
-        
-        .category-pill.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        /* Main Content */
-        .main-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 30px 20px;
-        }
-        
-        /* Section Headers */
-        .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 25px;
-        }
-        
-        .section-title {
-            font-size: 28px;
-            font-weight: bold;
-            color: #333;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .see-all {
-            color: #667eea;
-            text-decoration: none;
-            font-size: 14px;
-            transition: all 0.3s;
-        }
-        
-        .see-all:hover {
-            transform: translateX(5px);
-        }
-        
-        /* Business Cards Grid */
-        .business-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 25px;
-            margin-bottom: 50px;
-        }
-        
-        .business-card {
-            background: white;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-            transition: all 0.3s;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-            display: block;
-        }
-        
-        .business-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-        }
-        
-        .business-image {
-            width: 100%;
-            height: 180px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .business-image img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .business-badge {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #4caf50;
-            color: white;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: bold;
-        }
-        
-        .business-badge.closed {
-            background: #f44336;
-        }
-        
-        .business-badge.new {
-            background: #ff9800;
-        }
-        
-        .business-content {
-            padding: 20px;
-        }
-        
-        .business-name {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 8px;
-            color: #333;
-        }
-        
-        .business-type {
-            color: #666;
-            font-size: 14px;
-            margin-bottom: 10px;
-        }
-        
-        .business-meta {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-        }
-        
-        .rating {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 14px;
-            color: #666;
-        }
-        
-        .rating .stars {
-            color: #ffc107;
-        }
-        
-        .distance {
-            font-size: 14px;
-            color: #666;
-        }
-        
-        /* Featured Carousel */
-        .featured-carousel {
-            display: flex;
-            gap: 20px;
-            overflow-x: auto;
-            padding-bottom: 20px;
-            margin-bottom: 50px;
-        }
-        
-        .featured-card {
-            min-width: 400px;
-            height: 250px;
-            border-radius: 20px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 30px;
-            color: white;
-            position: relative;
-            overflow: hidden;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-decoration: none;
-        }
-        
-        .featured-card:hover {
-            transform: scale(1.02);
-        }
-        
-        .featured-content {
-            position: relative;
-            z-index: 2;
-        }
-        
-        .featured-tag {
-            background: rgba(255,255,255,0.2);
-            padding: 5px 15px;
-            border-radius: 20px;
-            display: inline-block;
-            font-size: 12px;
-            margin-bottom: 15px;
-        }
-        
-        .featured-title {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-        
-        .featured-desc {
-            font-size: 16px;
-            opacity: 0.9;
-            margin-bottom: 20px;
-        }
-        
-        .featured-cta {
-            background: white;
-            color: #667eea;
-            padding: 10px 20px;
-            border-radius: 25px;
-            display: inline-block;
-            text-decoration: none;
-            font-weight: bold;
-            transition: all 0.3s;
-        }
-        
-        .featured-cta:hover {
-            transform: translateX(5px);
-        }
-        
-        /* Stats Bar */
-        .stats-bar {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            margin-bottom: 50px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        }
-        
-        .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 30px;
-            text-align: center;
-        }
-        
-        .stat-item {
-            padding: 20px;
-        }
-        
-        .stat-number {
-            font-size: 36px;
-            font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
-        }
-        
-        .stat-label {
-            color: #666;
-            font-size: 14px;
-        }
-        
-        /* Footer */
-        .footer {
-            background: white;
-            border-top: 1px solid #e0e0e0;
-            padding: 40px 20px;
-            margin-top: 80px;
-        }
-        
-        .footer-content {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-        }
-        
-        .footer-section h3 {
-            font-size: 18px;
-            margin-bottom: 15px;
-            color: #333;
-        }
-        
-        .footer-section a {
-            display: block;
-            color: #666;
-            text-decoration: none;
-            margin-bottom: 10px;
-            transition: color 0.3s;
-        }
-        
-        .footer-section a:hover {
-            color: #667eea;
-        }
-        
-        .footer-bottom {
-            text-align: center;
-            padding-top: 30px;
-            margin-top: 30px;
-            border-top: 1px solid #e0e0e0;
-            color: #666;
-            font-size: 14px;
-        }
-        
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 32px;
-            }
-            
-            .search-bar {
-                display: none;
-            }
-            
-            .business-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .featured-card {
-                min-width: 280px;
-            }
-            
-            .stats-container {
-                grid-template-columns: repeat(2, 1fr);
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OMFID - Discover Menus Near You</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <!-- Header -->
-    <header class="header">
-        <div class="header-content">
-            <a href="/" class="logo">OMFID</a>
-            
-            <div class="search-bar">
-                <input type="text" class="search-input" placeholder="Search restaurants, cafes, spas..." id="searchInput">
-                <button class="search-btn" onclick="handleSearch()">🔍</button>
-            </div>
-            
-            <div class="header-actions">
-                <a href="/discover" class="btn btn-secondary">🗺️ Map View</a>
-                <a href="https://omf.gg/maker" class="btn btn-primary">+ Add Business</a>
-            </div>
-        </div>
-    </header>
+<!-- Header -->
+<header class="header">
+<div class="header-content">
+<a href="index.html" class="logo">OMFID</a>
+<div class="search-bar">
+<input type="text" class="search-input" placeholder="Search restaurants, cafes, spas..." id="searchInput">
+<button class="search-btn" onclick="handleSearch()">🔍</button>
+</div>
+<div class="header-actions">
+<button class="theme-toggle" onclick="toggleTheme()" title="Toggle dark mode">
+<span class="theme-icon">🌙</span>
+</button>
+<a href="#map" class="btn btn-secondary">🗺️ Map View</a>
+<a href="https://omf.gg/maker" target="_blank" class="btn btn-primary">+ Add Business</a>
+</div>
+</div>
+</header>
+<!-- Hero Section -->
+<section class="hero">
+<h1>Discover Menus & Services Near You</h1>
+<p>Browse restaurants, cafes, spas, and more. Updated menus, real prices, instant access.</p>
+<button class="location-picker" onclick="pickLocation()">
+ 📍 Bangkok, Thailand ▼
+</button>
+</section>
+<!-- Category Pills -->
+<div class="categories">
+<div class="categories-container">
+<button class="category-pill active" onclick="filterCategory('all')">🔥 All</button>
+<button class="category-pill" onclick="filterCategory('restaurant')">🍕 Restaurants</button>
+<button class="category-pill" onclick="filterCategory('cafe')">☕ Cafes</button>
+<button class="category-pill" onclick="filterCategory('spa')">💆 Spa & Massage</button>
+<button class="category-pill" onclick="filterCategory('salon')">💅 Beauty</button>
+<button class="category-pill" onclick="filterCategory('bakery')">🥐 Bakery</button>
+<button class="category-pill" onclick="filterCategory('bar')">🍺 Bars</button>
+</div>
+</div>
+<!-- Main Content -->
+<main class="main-content">
+<!-- Featured Section -->
+<section>
+<div class="section-header">
+<h2 class="section-title">✨ Featured This Week</h2>
+</div>
+<div class="featured-carousel">
+<a href="#tonys-pizza" class="featured-card">
+<div class="featured-content">
+<span class="featured-tag">SPECIAL OFFER</span>
+<h3 class="featured-title">Tony's Pizza</h3>
+<p class="featured-desc">50% off second pizza every Tuesday!</p>
+<span class="featured-cta">View Menu →</span>
+</div>
+</a>
+<a href="#marias-spa" class="featured-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+<div class="featured-content">
+<span class="featured-tag">NEW OPENING</span>
+<h3 class="featured-title">Maria's Spa</h3>
+<p class="featured-desc">Grand opening special - 30% off all services</p>
+<span class="featured-cta">Book Now →</span>
+</div>
+</a>
+</div>
+</section>
+<!-- Stats Bar -->
+<div class="stats-bar">
+<div class="stats-container">
+<div class="stat-item">
+<div class="stat-number">2,847</div>
+<div class="stat-label">Active Businesses</div>
+</div>
+<div class="stat-item">
+<div class="stat-number">12,394</div>
+<div class="stat-label">Menu Items</div>
+</div>
+<div class="stat-item">
+<div class="stat-number">48</div>
+<div class="stat-label">Cities</div>
+</div>
+<div class="stat-item">
+<div class="stat-number">24/7</div>
+<div class="stat-label">Always Updated</div>
+</div>
+</div>
+</div>
+<!-- Trending Now -->
+<section>
+<div class="section-header">
+<h2 class="section-title">🔥 Trending Now</h2>
+<a href="#trending" class="see-all">See all →</a>
+</div>
+<div class="business-grid">
+<a href="#tonys-pizza" class="business-card">
+<div class="business-image">
+<span class="business-badge">OPEN NOW</span>
+</div>
+<div class="business-content">
+<h3 class="business-name">Tony's Pizza Bangkok</h3>
+<p class="business-type">🍕 Italian Restaurant</p>
+<div class="business-meta">
+<div class="rating">
+<span class="stars">⭐⭐⭐⭐⭐</span>
+<span>4.8 (324)</span>
+</div>
+<div class="distance">0.8 km</div>
+</div>
+</div>
+</a>
+<a href="#johns-coffee" class="business-card">
+<div class="business-image">
+<span class="business-badge">OPEN NOW</span>
+</div>
+<div class="business-content">
+<h3 class="business-name">John's Coffee House</h3>
+<p class="business-type">☕ Specialty Coffee</p>
+<div class="business-meta">
+<div class="rating">
+<span class="stars">⭐⭐⭐⭐⭐</span>
+<span>4.9 (567)</span>
+</div>
+<div class="distance">1.2 km</div>
+</div>
+</div>
+</a>
+<a href="#marias-spa" class="business-card">
+<div class="business-image">
+<span class="business-badge new">NEW</span>
+</div>
+<div class="business-content">
+<h3 class="business-name">Maria's Thai Massage & Spa</h3>
+<p class="business-type">💆 Spa & Wellness</p>
+<div class="business-meta">
+<div class="rating">
+<span class="stars">⭐⭐⭐⭐⭐</span>
+<span>5.0 (89)</span>
+</div>
+<div class="distance">2.1 km</div>
+</div>
+</div>
+</a>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="footer">
+<div class="footer-content">
+<div class="footer-section">
+<h3>For Businesses</h3>
+<a href="https://omf.gg/maker" target="_blank">Add Your Business</a>
+<a href="#pricing">Pricing</a>
+<a href="#features">Features</a>
+</div>
+<div class="footer-section">
+<h3>Discover</h3>
+<a href="#restaurants">Restaurants</a>
+<a href="#cafes">Cafes</a>
+<a href="#spas">Spas & Massage</a>
+</div>
+<div class="footer-section">
+<h3>Company</h3>
+<a href="https://openmenuformat.com" target="_blank">About OMF</a>
+<a href="#blog">Blog</a>
+<a href="#contact">Contact</a>
+</div>
+</div>
+<div class="footer-bottom">
+<p>© 2025 OMFID - Part of the <a href="https://openmenuformat.com" target="_blank" style="color: inherit; text-decoration: underline;">Open Menu Format</a> ecosystem</p>
+<p>Made with ❤️ in Burbank and Bangkok</p>
+</div>
+</footer>
+<script>
+// Dark mode toggle
+function toggleTheme() {
+    document.body.classList.toggle('dark-mode');
+    const isDark = document.body.classList.contains('dark-mode');
+    localStorage.setItem('darkMode', isDark);
+    updateThemeIcon(isDark);
+}
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <h1>Discover Menus & Services Near You</h1>
-        <p>Browse restaurants, cafes, spas, and more. Updated menus, real prices, instant access.</p>
-        <button class="location-picker" onclick="pickLocation()">
-            📍 Bangkok, Thailand ▼
-        </button>
-    </section>
+function updateThemeIcon(isDark) {
+    const icon = document.querySelector('.theme-icon');
+    icon.textContent = isDark ? '☀️' : '🌙';
+}
 
-    <!-- Category Pills -->
-    <div class="categories">
-        <div class="categories-container">
-            <button class="category-pill active" onclick="filterCategory('all')">🔥 All</button>
-            <button class="category-pill" onclick="filterCategory('restaurant')">🍕 Restaurants</button>
-            <button class="category-pill" onclick="filterCategory('cafe')">☕ Cafes</button>
-            <button class="category-pill" onclick="filterCategory('spa')">💆 Spa & Massage</button>
-            <button class="category-pill" onclick="filterCategory('salon')">💅 Beauty</button>
-            <button class="category-pill" onclick="filterCategory('bakery')">🥐 Bakery</button>
-            <button class="category-pill" onclick="filterCategory('bar')">🍺 Bars</button>
-        </div>
-    </div>
+// Load saved theme
+document.addEventListener('DOMContentLoaded', () => {
+    const isDark = localStorage.getItem('darkMode') === 'true';
+    if (isDark) {
+        document.body.classList.add('dark-mode');
+    }
+    updateThemeIcon(isDark);
+});
 
-    <!-- Main Content -->
-    <main class="main-content">
-        
-        <!-- Featured Section -->
-        <section>
-            <div class="section-header">
-                <h2 class="section-title">✨ Featured This Week</h2>
-            </div>
-            <div class="featured-carousel">
-                <a href="/tonys-pizza" class="featured-card">
-                    <div class="featured-content">
-                        <span class="featured-tag">SPECIAL OFFER</span>
-                        <h3 class="featured-title">Tony's Pizza</h3>
-                        <p class="featured-desc">50% off second pizza every Tuesday!</p>
-                        <span class="featured-cta">View Menu →</span>
-                    </div>
-                </a>
-                <a href="/marias-spa" class="featured-card" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);">
-                    <div class="featured-content">
-                        <span class="featured-tag">NEW OPENING</span>
-                        <h3 class="featured-title">Maria's Spa</h3>
-                        <p class="featured-desc">Grand opening special - 30% off all services</p>
-                        <span class="featured-cta">Book Now →</span>
-                    </div>
-                </a>
-            </div>
-        </section>
+function handleSearch() {
+    const query = document.getElementById('searchInput').value;
+    if (query) {
+        alert(`Searching for: ${query}\n(This would normally search the database)`);
+    }
+}
 
-        <!-- Stats Bar -->
-        <div class="stats-bar">
-            <div class="stats-container">
-                <div class="stat-item">
-                    <div class="stat-number">2,847</div>
-                    <div class="stat-label">Active Businesses</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">12,394</div>
-                    <div class="stat-label">Menu Items</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">48</div>
-                    <div class="stat-label">Cities</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">24/7</div>
-                    <div class="stat-label">Always Updated</div>
-                </div>
-            </div>
-        </div>
+function filterCategory(category) {
+    document.querySelectorAll('.category-pill').forEach(pill => {
+        pill.classList.remove('active');
+    });
+    event.target.classList.add('active');
+    console.log('Filtering by:', category);
+    // In production, this would filter the displayed businesses
+}
 
-        <!-- Trending Now -->
-        <section>
-            <div class="section-header">
-                <h2 class="section-title">🔥 Trending Now</h2>
-                <a href="/trending" class="see-all">See all →</a>
-            </div>
-            <div class="business-grid">
-                <a href="/tonys-pizza" class="business-card">
-                    <div class="business-image">
-                        <span class="business-badge">OPEN NOW</span>
-                    </div>
-                    <div class="business-content">
-                        <h3 class="business-name">Tony's Pizza Bangkok</h3>
-                        <p class="business-type">🍕 Italian Restaurant</p>
-                        <div class="business-meta">
-                            <div class="rating">
-                                <span class="stars">⭐⭐⭐⭐⭐</span>
-                                <span>4.8 (324)</span>
-                            </div>
-                            <div class="distance">0.8 km</div>
-                        </div>
-                    </div>
-                </a>
-                
-                <a href="/johns-coffee" class="business-card">
-                    <div class="business-image">
-                        <span class="business-badge">OPEN NOW</span>
-                    </div>
-                    <div class="business-content">
-                        <h3 class="business-name">John's Coffee House</h3>
-                        <p class="business-type">☕ Specialty Coffee</p>
-                        <div class="business-meta">
-                            <div class="rating">
-                                <span class="stars">⭐⭐⭐⭐⭐</span>
-                                <span>4.9 (567)</span>
-                            </div>
-                            <div class="distance">1.2 km</div>
-                        </div>
-                    </div>
-                </a>
-                
-                <a href="/marias-spa" class="business-card">
-                    <div class="business-image">
-                        <span class="business-badge new">NEW</span>
-                    </div>
-                    <div class="business-content">
-                        <h3 class="business-name">Maria's Thai Massage & Spa</h3>
-                        <p class="business-type">💆 Spa & Wellness</p>
-                        <div class="business-meta">
-                            <div class="rating">
-                                <span class="stars">⭐⭐⭐⭐⭐</span>
-                                <span>5.0 (89)</span>
-                            </div>
-                            <div class="distance">2.1 km</div>
-                        </div>
-                    </div>
-                </a>
-            </div>
-        </section>
+function pickLocation() {
+    alert('Location picker coming soon!\n(This would open a location selection modal)');
+}
 
-    </main>
+document.getElementById('searchInput').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+        handleSearch();
+    }
+});
 
-    <!-- Footer -->
-    <footer class="footer">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>For Businesses</h3>
-                <a href="https://omf.gg/maker">Add Your Business</a>
-                <a href="/pricing">Pricing</a>
-                <a href="/features">Features</a>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Discover</h3>
-                <a href="/restaurants">Restaurants</a>
-                <a href="/cafes">Cafes</a>
-                <a href="/spas">Spas & Massage</a>
-            </div>
-            
-            <div class="footer-section">
-                <h3>Company</h3>
-                <a href="https://openmenuformat.com">About OMF</a>
-                <a href="/blog">Blog</a>
-                <a href="/contact">Contact</a>
-            </div>
-        </div>
-        
-        <div class="footer-bottom">
-            <p>© 2025 OMFID - Part of the Open Menu Format ecosystem</p>
-            <p>Made with ❤️ in Bangkok</p>
-        </div>
-    </footer>
-
-    <script>
-        function handleSearch() {
-            const query = document.getElementById('searchInput').value;
-            if (query) {
-                window.location.href = `/search?q=${encodeURIComponent(query)}`;
-            }
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
         }
-        
-        function filterCategory(category) {
-            document.querySelectorAll('.category-pill').forEach(pill => {
-                pill.classList.remove('active');
-            });
-            event.target.classList.add('active');
-            console.log('Filtering by:', category);
-        }
-        
-        function pickLocation() {
-            alert('Location picker coming soon!');
-        }
-        
-        document.getElementById('searchInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                handleSearch();
-            }
-        });
-    </script>
+    });
+});
+</script>
 </body>
 </html>
