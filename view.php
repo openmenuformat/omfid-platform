@@ -140,7 +140,7 @@ $business = $businesses[$omf_id] ?? [
         }
 
         .logo-img {
-            height: 35px !important;
+            height: 100px !important;
             width: auto !important;
             border-radius: 6px !important;
             transition: all 0.3s ease !important;
