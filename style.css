@@ -30,40 +30,47 @@ body {
 
 /* Logo Styles with Image */
 .logo {
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    transition: all 0.3s ease;
+    display: flex !important;
+    align-items: center !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+    font-size: unset !important;
+    font-weight: unset !important;
+    background: unset !important;
+    -webkit-background-clip: unset !important;
+    -webkit-text-fill-color: unset !important;
 }
 
 .logo:hover {
-    transform: scale(1.05);
+    transform: scale(1.05) !important;
 }
 
 .logo-img {
-    height: 45px;
-    width: auto;
-    border-radius: 10px;
-    transition: all 0.3s ease;
+    height: 42px !important;
+    width: auto !important;
+    border-radius: 8px !important;
+    transition: all 0.3s ease !important;
+    max-width: none !important;
+    max-height: none !important;
 }
 
 /* Dark mode logo adjustments */
 body.dark-mode .logo-img {
-    filter: brightness(1.1) contrast(1.1);
+    filter: brightness(1.1) contrast(1.1) !important;
 }
 
 /* Mobile responsive logo */
 @media (max-width: 768px) {
     .logo-img {
-        height: 40px;
+        height: 36px !important;
     }
 }
 
 /* High DPI displays */
 @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
     .logo-img {
-        image-rendering: -webkit-optimize-contrast;
-        image-rendering: crisp-edges;
+        image-rendering: -webkit-optimize-contrast !important;
+        image-rendering: crisp-edges !important;
     }
 }
 
@@ -750,8 +757,4 @@ body.dark-mode .footer-link:hover {
 body, .header, .search-input, .btn, .category-pill, 
 .business-card, .stats-bar, .footer {
     transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
-}
-.logo img {
-    height: 40px !important;
-    width: auto !important;
 }
