@@ -46,12 +46,9 @@ body {
 }
 
 .logo-img {
-    height: 42px !important;
+    height: 35px !important;
     width: auto !important;
-    border-radius: 8px !important;
-    transition: all 0.3s ease !important;
-    max-width: none !important;
-    max-height: none !important;
+    object-fit: contain !important;
 }
 
 /* Dark mode logo adjustments */
