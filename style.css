@@ -39,6 +39,7 @@ body {
     background: unset !important;
     -webkit-background-clip: unset !important;
     -webkit-text-fill-color: unset !important;
+    background-clip: unset !important;
 }
 
 .logo:hover {
@@ -46,8 +47,12 @@ body {
 }
 
 .logo-img {
-    height: 100px !important;
+    height: 35px !important;
     width: auto !important;
+    border-radius: 6px !important;
+    transition: all 0.3s ease !important;
+    max-width: none !important;
+    max-height: none !important;
     object-fit: contain !important;
 }
 
@@ -59,7 +64,7 @@ body.dark-mode .logo-img {
 /* Mobile responsive logo */
 @media (max-width: 768px) {
     .logo-img {
-        height: 36px !important;
+        height: 28px !important;
     }
 }
 
@@ -474,6 +479,7 @@ body.dark-mode .logo-img {
     font-weight: bold;
     background: linear-gradient(135deg, #0066cc 0%, #004499 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
     margin-bottom: 5px;
 }
@@ -716,6 +722,7 @@ body.dark-mode .stats-bar {
 body.dark-mode .stat-number {
     background: linear-gradient(135deg, #0088ff 0%, #0066cc 100%);
     -webkit-background-clip: text;
+    background-clip: text;
     -webkit-text-fill-color: transparent;
 }
 

@@ -38,6 +38,20 @@ $business = $businesses[$omf_id] ?? [
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($business['name']); ?> - OMFID</title>
+    
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/jpeg" href="https://omfid.com/assets/logo.jpg">
+    <link rel="apple-touch-icon" href="https://omfid.com/assets/logo.jpg">
+    
+    <!-- Social Media Meta Tags -->
+    <meta property="og:title" content="<?php echo htmlspecialchars($business['name']); ?> - OMFID">
+    <meta property="og:description" content="<?php echo htmlspecialchars($business['description']); ?>">
+    <meta property="og:image" content="https://omfid.com/assets/logo.jpg">
+    <meta property="og:image:width" content="1000">
+    <meta property="og:image:height" content="1000">
+    <meta name="twitter:image" content="https://omfid.com/assets/logo.jpg">
+    <meta name="twitter:card" content="summary">
+    
     <style>
         /* CSS Variables for Dark Mode */
         :root {
@@ -107,14 +121,52 @@ $business = $businesses[$omf_id] ?? [
             align-items: center;
         }
         
+        /* Logo Styles with Image */
         .logo {
-            font-size: 24px;
-            font-weight: bold;
-            background: var(--hero-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            text-decoration: none;
+            display: flex !important;
+            align-items: center !important;
+            text-decoration: none !important;
+            transition: all 0.3s ease !important;
+            font-size: unset !important;
+            font-weight: unset !important;
+            background: unset !important;
+            -webkit-background-clip: unset !important;
+            -webkit-text-fill-color: unset !important;
+            background-clip: unset !important;
+        }
+
+        .logo:hover {
+            transform: scale(1.05) !important;
+        }
+
+        .logo-img {
+            height: 35px !important;
+            width: auto !important;
+            border-radius: 6px !important;
+            transition: all 0.3s ease !important;
+            max-width: none !important;
+            max-height: none !important;
+            object-fit: contain !important;
+        }
+
+        /* Dark mode logo adjustments */
+        [data-theme="dark"] .logo-img {
+            filter: brightness(1.1) contrast(1.1) !important;
+        }
+
+        /* Mobile responsive logo */
+        @media (max-width: 768px) {
+            .logo-img {
+                height: 28px !important;
+            }
+        }
+
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .logo-img {
+                image-rendering: -webkit-optimize-contrast !important;
+                image-rendering: crisp-edges !important;
+            }
         }
         
         .header-actions {
@@ -540,7 +592,9 @@ $business = $businesses[$omf_id] ?? [
     <!-- Header -->
     <header class="header">
         <div class="header-content">
-            <a href="/" class="logo">OMFID</a>
+            <a href="/" class="logo">
+                <img src="https://omfid.com/assets/logo.jpg" alt="OMFID" class="logo-img" loading="eager">
+            </a>
             <div class="header-actions">
                 <button class="theme-toggle" id="themeToggle">
                     <span class="theme-icon">🌙</span>
@@ -789,7 +843,7 @@ $business = $businesses[$omf_id] ?? [
         <div class="cta-section">
             <h2>Is this your business?</h2>
             <p>Take control of your OMFID profile and keep your menu always up to date</p>
-            <a href="https://omf.gg/maker" class="cta-button">Claim This Business - It's Free!</a>
+            <a href="https://make.openmenuformat.com" class="cta-button">Claim This Business - It's Free!</a>
         </div>
     </div>
 
