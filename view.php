@@ -614,7 +614,7 @@ $business = $businesses[$omf_id] ?? [
                         <div class="settings-item" onclick="showAbout()">
                             ℹ️ About OMFID
                         </div>
-                        <div class="settings-item" onclick="window.open('https://omf.gg/maker', '_blank')">
+                        <div class="settings-item" onclick="window.open('https://make.openmenuformat.com', '_blank')">
                             🏪 Create Business
                         </div>
                     </div>
