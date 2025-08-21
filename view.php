@@ -39,23 +39,63 @@ $business = $businesses[$omf_id] ?? [
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo htmlspecialchars($business['name']); ?> - OMFID</title>
     <style>
+        /* CSS Variables for Dark Mode */
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8fafc;
+            --bg-tertiary: #f1f5f9;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --text-muted: #94a3b8;
+            --border-color: #e2e8f0;
+            --card-bg: #ffffff;
+            --header-bg: #ffffff;
+            --hero-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --accent-color: #667eea;
+            --shadow-light: rgba(0, 0, 0, 0.05);
+            --shadow-medium: rgba(0, 0, 0, 0.1);
+            --shadow-heavy: rgba(0, 0, 0, 0.2);
+        }
+
+        [data-theme="dark"] {
+            --bg-primary: #0f172a;
+            --bg-secondary: #1e293b;
+            --bg-tertiary: #334155;
+            --text-primary: #f8fafc;
+            --text-secondary: #cbd5e1;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --card-bg: #1e293b;
+            --header-bg: #1e293b;
+            --hero-gradient: linear-gradient(135deg, #4338ca 0%, #7c3aed 100%);
+            --accent-color: #6366f1;
+            --shadow-light: rgba(0, 0, 0, 0.3);
+            --shadow-medium: rgba(0, 0, 0, 0.4);
+            --shadow-heavy: rgba(0, 0, 0, 0.6);
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
-            background: #f8f9fa;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transition: all 0.3s ease;
         }
         
         /* Header */
         .header {
-            background: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            background: var(--header-bg);
+            box-shadow: 0 2px 10px var(--shadow-light);
             position: sticky;
             top: 0;
             z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
         }
         
         .header-content {
@@ -70,9 +110,10 @@ $business = $businesses[$omf_id] ?? [
         .logo {
             font-size: 24px;
             font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--hero-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
             text-decoration: none;
         }
         
@@ -81,24 +122,107 @@ $business = $businesses[$omf_id] ?? [
             gap: 15px;
             align-items: center;
         }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 18px;
+        }
+
+        .theme-toggle:hover {
+            border-color: var(--accent-color);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px var(--shadow-medium);
+        }
+
+        /* Settings Dropdown */
+        .settings-dropdown {
+            position: relative;
+        }
+
+        .settings-btn {
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-primary);
+        }
+
+        .settings-btn:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-medium);
+        }
+
+        .settings-menu {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 8px 0;
+            min-width: 200px;
+            box-shadow: 0 10px 40px var(--shadow-medium);
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .settings-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .settings-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--text-primary);
+        }
+
+        .settings-item:hover {
+            background: var(--bg-tertiary);
+        }
         
         .language-selector {
             padding: 8px 15px;
-            border: 2px solid #e0e0e0;
+            border: 2px solid var(--border-color);
             border-radius: 25px;
-            background: white;
+            background: var(--card-bg);
+            color: var(--text-primary);
             cursor: pointer;
             transition: all 0.3s;
         }
         
         .language-selector:hover {
-            border-color: #667eea;
+            border-color: var(--accent-color);
             transform: translateY(-2px);
         }
         
         /* Business Hero */
         .business-hero {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--hero-gradient);
             color: white;
             padding: 60px 20px;
             position: relative;
@@ -165,7 +289,7 @@ $business = $businesses[$omf_id] ?? [
         
         .action-btn.primary {
             background: white;
-            color: #667eea;
+            color: var(--accent-color);
         }
         
         .action-btn.secondary {
@@ -175,7 +299,7 @@ $business = $businesses[$omf_id] ?? [
         
         .action-btn:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 20px var(--shadow-heavy);
         }
         
         /* Menu Container */
@@ -189,11 +313,12 @@ $business = $businesses[$omf_id] ?? [
         
         /* Menu Sections */
         .menu-section {
-            background: white;
+            background: var(--card-bg);
             border-radius: 20px;
             padding: 30px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 40px var(--shadow-medium);
             margin-bottom: 30px;
+            border: 1px solid var(--border-color);
         }
         
         .section-header {
@@ -202,13 +327,13 @@ $business = $businesses[$omf_id] ?? [
             align-items: center;
             margin-bottom: 30px;
             padding-bottom: 15px;
-            border-bottom: 2px solid #f0f0f0;
+            border-bottom: 2px solid var(--border-color);
         }
         
         .section-title {
             font-size: 28px;
             font-weight: bold;
-            color: #333;
+            color: var(--text-primary);
         }
         
         .view-toggle {
@@ -218,17 +343,22 @@ $business = $businesses[$omf_id] ?? [
         
         .toggle-btn {
             padding: 8px 16px;
-            border: 2px solid #e0e0e0;
-            background: white;
+            border: 2px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-primary);
             border-radius: 20px;
             cursor: pointer;
             transition: all 0.3s;
         }
         
         .toggle-btn.active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--hero-gradient);
             color: white;
             border-color: transparent;
+        }
+        
+        .toggle-btn:hover:not(.active) {
+            border-color: var(--accent-color);
         }
         
         /* Menu Grid */
@@ -239,16 +369,18 @@ $business = $businesses[$omf_id] ?? [
         }
         
         .menu-item {
-            background: #f8f9fa;
+            background: var(--bg-tertiary);
             border-radius: 15px;
             padding: 20px;
             transition: all 0.3s;
             cursor: pointer;
+            border: 1px solid var(--border-color);
         }
         
         .menu-item:hover {
             transform: translateY(-3px);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 20px var(--shadow-medium);
+            border-color: var(--accent-color);
         }
         
         .menu-item-header {
@@ -261,19 +393,20 @@ $business = $businesses[$omf_id] ?? [
         .menu-item-name {
             font-size: 20px;
             font-weight: bold;
-            color: #333;
+            color: var(--text-primary);
         }
         
         .menu-item-price {
             font-size: 20px;
             font-weight: bold;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--hero-gradient);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
         
         .menu-item-description {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 14px;
             line-height: 1.5;
             margin-bottom: 10px;
@@ -287,30 +420,34 @@ $business = $businesses[$omf_id] ?? [
         
         .tag {
             padding: 4px 10px;
-            background: white;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
             font-size: 12px;
-            color: #666;
+            color: var(--text-secondary);
         }
         
         .tag.spicy {
-            background: #ffe5e5;
+            background: rgba(255, 68, 68, 0.1);
             color: #ff4444;
+            border-color: rgba(255, 68, 68, 0.3);
         }
         
         .tag.popular {
-            background: #fff3cd;
+            background: rgba(255, 152, 0, 0.1);
             color: #ff9800;
+            border-color: rgba(255, 152, 0, 0.3);
         }
         
         .tag.veg {
-            background: #e8f5e9;
+            background: rgba(76, 175, 80, 0.1);
             color: #4caf50;
+            border-color: rgba(76, 175, 80, 0.3);
         }
         
         /* CTA Section */
         .cta-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: var(--hero-gradient);
             color: white;
             text-align: center;
             padding: 50px 20px;
@@ -331,7 +468,7 @@ $business = $businesses[$omf_id] ?? [
         
         .cta-button {
             background: white;
-            color: #667eea;
+            color: var(--accent-color);
             padding: 15px 40px;
             border-radius: 30px;
             text-decoration: none;
@@ -342,7 +479,26 @@ $business = $businesses[$omf_id] ?? [
         
         .cta-button:hover {
             transform: scale(1.05);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 30px var(--shadow-heavy);
+        }
+
+        /* Empty State */
+        .empty-state {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--bg-tertiary);
+            border-radius: 15px;
+            border: 2px dashed var(--border-color);
+        }
+
+        .empty-state h3 {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
         }
         
         /* Mobile Responsive */
@@ -363,6 +519,20 @@ $business = $businesses[$omf_id] ?? [
             .quick-actions {
                 flex-wrap: wrap;
             }
+
+            .header-actions {
+                gap: 10px;
+            }
+
+            .settings-menu {
+                right: -20px;
+                width: 250px;
+            }
+        }
+
+        /* Smooth transitions for all elements */
+        * {
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
     </style>
 </head>
@@ -372,6 +542,30 @@ $business = $businesses[$omf_id] ?? [
         <div class="header-content">
             <a href="/" class="logo">OMFID</a>
             <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle">
+                    <span class="theme-icon">🌙</span>
+                </button>
+                
+                <div class="settings-dropdown">
+                    <button class="settings-btn" id="settingsBtn">
+                        ⚙️ Settings
+                    </button>
+                    <div class="settings-menu" id="settingsMenu">
+                        <div class="settings-item" onclick="shareApp()">
+                            📤 Share App
+                        </div>
+                        <div class="settings-item" onclick="reportIssue()">
+                            🐛 Report Issue
+                        </div>
+                        <div class="settings-item" onclick="showAbout()">
+                            ℹ️ About OMFID
+                        </div>
+                        <div class="settings-item" onclick="window.open('https://omf.gg/maker', '_blank')">
+                            🏪 Create Business
+                        </div>
+                    </div>
+                </div>
+                
                 <select class="language-selector" id="languageSelector" onchange="changeLanguage()">
                     <option value="en">🇬🇧 English</option>
                     <option value="th">🇹🇭 ไทย</option>
@@ -410,12 +604,12 @@ $business = $businesses[$omf_id] ?? [
             <div class="section-header">
                 <h2 class="section-title">Menu</h2>
                 <div class="view-toggle">
-                    <button class="toggle-btn active">Grid View</button>
-                    <button class="toggle-btn">List View</button>
+                    <button class="toggle-btn active" onclick="switchView('grid')">Grid View</button>
+                    <button class="toggle-btn" onclick="switchView('list')">List View</button>
                 </div>
             </div>
             
-            <div class="menu-grid">
+            <div class="menu-grid" id="menuGrid">
                 <?php if ($omf_id == 'tonys-pizza'): ?>
                     <!-- Pizza Menu Items -->
                     <div class="menu-item">
@@ -583,9 +777,9 @@ $business = $businesses[$omf_id] ?? [
                     
                 <?php else: ?>
                     <!-- Default for unknown businesses -->
-                    <div style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
-                        <h3 style="color: #666; margin-bottom: 20px;">Menu Coming Soon!</h3>
-                        <p style="color: #999;">This business hasn't uploaded their menu yet.</p>
+                    <div class="empty-state">
+                        <h3>Menu Coming Soon!</h3>
+                        <p>This business hasn't uploaded their menu yet.</p>
                     </div>
                 <?php endif; ?>
             </div>
@@ -600,6 +794,85 @@ $business = $businesses[$omf_id] ?? [
     </div>
 
     <script>
+        // Dark Mode Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const themeIcon = themeToggle.querySelector('.theme-icon');
+
+        // Load saved theme
+        const savedTheme = localStorage.getItem('omfid-theme') || 'light';
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        updateThemeIcon(savedTheme);
+
+        themeToggle.addEventListener('click', () => {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('omfid-theme', newTheme);
+            updateThemeIcon(newTheme);
+        });
+
+        function updateThemeIcon(theme) {
+            themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        }
+
+        // Settings Dropdown
+        const settingsBtn = document.getElementById('settingsBtn');
+        const settingsMenu = document.getElementById('settingsMenu');
+
+        settingsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            settingsMenu.classList.toggle('active');
+        });
+
+        // Close settings menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!settingsBtn.contains(e.target) && !settingsMenu.contains(e.target)) {
+                settingsMenu.classList.remove('active');
+            }
+        });
+
+        // Settings Functions
+        function shareApp() {
+            if (navigator.share) {
+                navigator.share({
+                    title: 'OMFID - Open Menu Format Directory',
+                    text: 'Discover amazing local businesses on OMFID!',
+                    url: 'https://omfid.com'
+                });
+            } else {
+                navigator.clipboard.writeText('https://omfid.com');
+                alert('OMFID link copied to clipboard!');
+            }
+            settingsMenu.classList.remove('active');
+        }
+
+        function reportIssue() {
+            window.open('mailto:support@omfid.com?subject=Issue Report&body=Please describe the issue you encountered:', '_blank');
+            settingsMenu.classList.remove('active');
+        }
+
+        function showAbout() {
+            alert('OMFID v1.0\n\nOpen Menu Format Directory\nDiscover. Connect. Explore.\n\nPowered by Open Menu Format');
+            settingsMenu.classList.remove('active');
+        }
+
+        // View Toggle
+        function switchView(viewType) {
+            const buttons = document.querySelectorAll('.toggle-btn');
+            const menuGrid = document.getElementById('menuGrid');
+            
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            if (viewType === 'list') {
+                menuGrid.style.gridTemplateColumns = '1fr';
+            } else {
+                menuGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(350px, 1fr))';
+            }
+        }
+
+        // Business Actions
         function handleCall() {
             window.location.href = 'tel:+6621234567';
         }
