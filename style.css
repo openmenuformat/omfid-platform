@@ -46,7 +46,7 @@ body {
 }
 
 .logo-img {
-    height: 35px !important;
+    height: 100px !important;
     width: auto !important;
     object-fit: contain !important;
 }
