@@ -125,22 +125,52 @@ $business = $businesses[$omf_id] ?? [
             align-items: center;
         }
         
-        /* Logo Styles */
+        /* Logo Styles with Image (Same as homepage) */
         .logo {
             display: flex !important;
             align-items: center !important;
             text-decoration: none !important;
             transition: all 0.3s ease !important;
-            font-size: 1.5rem !important;
-            font-weight: bold !important;
-            background: var(--hero-gradient) !important;
-            -webkit-background-clip: text !important;
-            -webkit-text-fill-color: transparent !important;
-            background-clip: text !important;
+            font-size: unset !important;
+            font-weight: unset !important;
+            background: unset !important;
+            -webkit-background-clip: unset !important;
+            -webkit-text-fill-color: unset !important;
+            background-clip: unset !important;
         }
 
         .logo:hover {
             transform: scale(1.05) !important;
+        }
+
+        .logo-img {
+            height: 35px !important;
+            width: auto !important;
+            border-radius: 6px !important;
+            transition: all 0.3s ease !important;
+            max-width: none !important;
+            max-height: none !important;
+            object-fit: contain !important;
+        }
+
+        /* Dark mode logo adjustments */
+        [data-theme="dark"] .logo-img {
+            filter: brightness(1.1) contrast(1.1) !important;
+        }
+
+        /* Mobile responsive logo */
+        @media (max-width: 768px) {
+            .logo-img {
+                height: 28px !important;
+            }
+        }
+
+        /* High DPI displays */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .logo-img {
+                image-rendering: -webkit-optimize-contrast !important;
+                image-rendering: crisp-edges !important;
+            }
         }
         
         .header-actions {
@@ -600,7 +630,9 @@ $business = $businesses[$omf_id] ?? [
     <!-- Header with Dark Mode & Settings -->
     <header class="header">
         <div class="header-content">
-            <a href="/" class="logo">OMFID</a>
+            <a href="/" class="logo">
+                <img src="https://omfid.com/assets/logo.jpg" alt="OMFID" class="logo-img" loading="eager">
+            </a>
             <div class="header-actions">
                 <button class="theme-toggle" id="themeToggle">
                     <span class="theme-icon">🌙</span>
