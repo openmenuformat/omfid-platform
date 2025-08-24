@@ -24,13 +24,57 @@ $businesses = [
     ]
 ];
 
-// Get business data or use default
-$business = $businesses[$omf_id] ?? [
-    'name' => ucwords(str_replace('-', ' ', $omf_id)),
-    'description' => 'Welcome to our business',
-    'address' => 'Bangkok, Thailand',
-    'type' => '🏪 Business'
+// UPDATED: Publish status and moderation logic
+$publishStatus = [
+    'tonys-pizza' => [
+        'omfid_published' => true,
+        'moderation_status' => 'approved'  // LIVE on OMFID
+    ],
+    'marias-spa' => [
+        'omfid_published' => true,
+        'moderation_status' => 'pending'   // NOT LIVE - awaiting approval
+    ],
+    'johns-coffee' => [
+        'omfid_published' => false,
+        'moderation_status' => 'draft'     // NOT LIVE - not published
+    ]
 ];
+
+// Function to check if business should be shown
+function getPublishedBusiness($omf_id) {
+    global $businesses, $publishStatus;
+    
+    // Validate slug format first
+    if (!preg_match('/^[a-z0-9-]+$/', $omf_id)) {
+        return null;
+    }
+    
+    // Check if business exists
+    if (!isset($businesses[$omf_id])) {
+        return null;
+    }
+    
+    // Get publish status for this business
+    $status = $publishStatus[$omf_id] ?? ['omfid_published' => false, 'moderation_status' => 'draft'];
+    
+    // CRITICAL: Only show if BOTH published AND approved
+    if ($status['omfid_published'] === true && $status['moderation_status'] === 'approved') {
+        return $businesses[$omf_id];
+    }
+    
+    // Business exists but not ready to show
+    return null;
+}
+
+// Get business data with new logic
+$business = getPublishedBusiness($omf_id);
+
+// Handle unpublished or non-approved business
+if (!$business) {
+    // Show "Coming Soon" or "Not Found" page
+    include 'not-found.php';
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -144,7 +188,7 @@ $business = $businesses[$omf_id] ?? [
         }
 
         .logo-img {
-            height: 50px !important;
+            height: 35px !important;
             width: auto !important;
             border-radius: 6px !important;
             transition: all 0.3s ease !important;
