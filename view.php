@@ -49,11 +49,13 @@ $business = $businesses[$omf_id] ?? [
     <meta property="og:image" content="https://omfid.com/assets/logo.jpg">
     <meta property="og:image:width" content="1000">
     <meta property="og:image:height" content="1000">
+    <meta property="og:url" content="https://omfid.com/<?php echo htmlspecialchars($omf_id); ?>">
+    <meta property="og:type" content="restaurant.menu">
     <meta name="twitter:image" content="https://omfid.com/assets/logo.jpg">
     <meta name="twitter:card" content="summary">
     
     <style>
-        /* CSS Variables for Dark Mode */
+        /* Modern CSS Variables with Dark Mode Support */
         :root {
             --bg-primary: #ffffff;
             --bg-secondary: #f8fafc;
@@ -92,6 +94,7 @@ $business = $businesses[$omf_id] ?? [
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
         }
 
         body {
@@ -99,9 +102,10 @@ $business = $businesses[$omf_id] ?? [
             background: var(--bg-secondary);
             color: var(--text-primary);
             transition: all 0.3s ease;
+            min-height: 100vh;
         }
         
-        /* Header */
+        /* Header Styles */
         .header {
             background: var(--header-bg);
             box-shadow: 0 2px 10px var(--shadow-light);
@@ -121,52 +125,22 @@ $business = $businesses[$omf_id] ?? [
             align-items: center;
         }
         
-        /* Logo Styles with Image */
+        /* Logo Styles */
         .logo {
             display: flex !important;
             align-items: center !important;
             text-decoration: none !important;
             transition: all 0.3s ease !important;
-            font-size: unset !important;
-            font-weight: unset !important;
-            background: unset !important;
-            -webkit-background-clip: unset !important;
-            -webkit-text-fill-color: unset !important;
-            background-clip: unset !important;
+            font-size: 1.5rem !important;
+            font-weight: bold !important;
+            background: var(--hero-gradient) !important;
+            -webkit-background-clip: text !important;
+            -webkit-text-fill-color: transparent !important;
+            background-clip: text !important;
         }
 
         .logo:hover {
             transform: scale(1.05) !important;
-        }
-
-        .logo-img {
-            height: 100px !important;
-            width: auto !important;
-            border-radius: 6px !important;
-            transition: all 0.3s ease !important;
-            max-width: none !important;
-            max-height: none !important;
-            object-fit: contain !important;
-        }
-
-        /* Dark mode logo adjustments */
-        [data-theme="dark"] .logo-img {
-            filter: brightness(1.1) contrast(1.1) !important;
-        }
-
-        /* Mobile responsive logo */
-        @media (max-width: 768px) {
-            .logo-img {
-                height: 28px !important;
-            }
-        }
-
-        /* High DPI displays */
-        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-            .logo-img {
-                image-rendering: -webkit-optimize-contrast !important;
-                image-rendering: crisp-edges !important;
-            }
         }
         
         .header-actions {
@@ -175,7 +149,7 @@ $business = $businesses[$omf_id] ?? [
             align-items: center;
         }
 
-        /* Theme Toggle */
+        /* Theme Toggle Button */
         .theme-toggle {
             background: var(--bg-tertiary);
             border: 2px solid var(--border-color);
@@ -188,6 +162,7 @@ $business = $businesses[$omf_id] ?? [
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 18px;
+            color: var(--text-primary);
         }
 
         .theme-toggle:hover {
@@ -212,6 +187,7 @@ $business = $businesses[$omf_id] ?? [
             align-items: center;
             gap: 8px;
             color: var(--text-primary);
+            text-decoration: none;
         }
 
         .settings-btn:hover {
@@ -271,8 +247,32 @@ $business = $businesses[$omf_id] ?? [
             border-color: var(--accent-color);
             transform: translateY(-2px);
         }
+
+        /* Action Button */
+        .action-btn {
+            padding: 8px 16px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-btn.secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .action-btn.secondary:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px var(--shadow-medium);
+        }
         
-        /* Business Hero */
+        /* Business Hero Section */
         .business-hero {
             background: var(--hero-gradient);
             color: white;
@@ -312,6 +312,7 @@ $business = $businesses[$omf_id] ?? [
             font-size: 18px;
             opacity: 0.9;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
         
         .meta-item {
@@ -325,9 +326,10 @@ $business = $businesses[$omf_id] ?? [
             display: flex;
             gap: 15px;
             margin-top: 30px;
+            flex-wrap: wrap;
         }
         
-        .action-btn {
+        .action-btn-hero {
             padding: 12px 24px;
             border: none;
             border-radius: 30px;
@@ -337,19 +339,20 @@ $business = $businesses[$omf_id] ?? [
             display: flex;
             align-items: center;
             gap: 8px;
+            text-decoration: none;
         }
         
-        .action-btn.primary {
+        .action-btn-hero.primary {
             background: white;
             color: var(--accent-color);
         }
         
-        .action-btn.secondary {
+        .action-btn-hero.secondary {
             background: rgba(255,255,255,0.2);
             color: white;
         }
         
-        .action-btn:hover {
+        .action-btn-hero:hover {
             transform: translateY(-2px);
             box-shadow: 0 5px 20px var(--shadow-heavy);
         }
@@ -580,21 +583,24 @@ $business = $businesses[$omf_id] ?? [
                 right: -20px;
                 width: 250px;
             }
-        }
 
-        /* Smooth transitions for all elements */
-        * {
-            transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+            .action-btn {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+
+            .action-btn-hero {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
+    <!-- Header with Dark Mode & Settings -->
     <header class="header">
         <div class="header-content">
-            <a href="/" class="logo">
-                <img src="https://omfid.com/assets/logo.jpg" alt="OMFID" class="logo-img" loading="eager">
-            </a>
+            <a href="/" class="logo">OMFID</a>
             <div class="header-actions">
                 <button class="theme-toggle" id="themeToggle">
                     <span class="theme-icon">🌙</span>
@@ -626,6 +632,8 @@ $business = $businesses[$omf_id] ?? [
                     <option value="zh">🇨🇳 中文</option>
                     <option value="ja">🇯🇵 日本語</option>
                 </select>
+
+                <a href="https://make.openmenuformat.com" target="_blank" class="action-btn secondary">📱 Create Menu</a>
             </div>
         </div>
     </header>
@@ -643,9 +651,9 @@ $business = $businesses[$omf_id] ?? [
                     <div class="meta-item"><?php echo $business['type']; ?></div>
                 </div>
                 <div class="quick-actions">
-                    <button class="action-btn primary" onclick="handleCall()">📞 Call Now</button>
-                    <button class="action-btn secondary" onclick="handleDirections()">🗺️ Get Directions</button>
-                    <button class="action-btn secondary" onclick="handleShare()">📤 Share</button>
+                    <button class="action-btn-hero primary" onclick="handleCall()">📞 Call Now</button>
+                    <button class="action-btn-hero secondary" onclick="handleDirections()">🗺️ Get Directions</button>
+                    <button class="action-btn-hero secondary" onclick="handleShare()">📤 Share</button>
                 </div>
             </div>
         </div>
@@ -843,12 +851,12 @@ $business = $businesses[$omf_id] ?? [
         <div class="cta-section">
             <h2>Is this your business?</h2>
             <p>Take control of your OMFID profile and keep your menu always up to date</p>
-            <a href="https://make.openmenuformat.com" class="cta-button">Claim This Business - It's Free!</a>
+            <a href="https://make.openmenuformat.com" target="_blank" class="cta-button">Claim This Business - It's Free!</a>
         </div>
     </div>
 
     <script>
-        // Dark Mode Toggle
+        // Dark Mode Toggle (Exact same as homepage)
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = themeToggle.querySelector('.theme-icon');
 
@@ -870,7 +878,7 @@ $business = $businesses[$omf_id] ?? [
             themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
         }
 
-        // Settings Dropdown
+        // Settings Dropdown (Same as homepage)
         const settingsBtn = document.getElementById('settingsBtn');
         const settingsMenu = document.getElementById('settingsMenu');
 
@@ -886,7 +894,7 @@ $business = $businesses[$omf_id] ?? [
             }
         });
 
-        // Settings Functions
+        // Settings Functions (Same as homepage)
         function shareApp() {
             if (navigator.share) {
                 navigator.share({
@@ -938,8 +946,8 @@ $business = $businesses[$omf_id] ?? [
         function handleShare() {
             if (navigator.share) {
                 navigator.share({
-                    title: '<?php echo $business['name']; ?>',
-                    text: 'Check out <?php echo $business['name']; ?> on OMFID!',
+                    title: '<?php echo addslashes($business['name']); ?>',
+                    text: 'Check out <?php echo addslashes($business['name']); ?> on OMFID!',
                     url: window.location.href
                 });
             } else {
