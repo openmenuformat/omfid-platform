@@ -32,7 +32,7 @@ $publishStatus = [
     ],
     'marias-spa' => [
         'omfid_published' => true,
-        'moderation_status' => 'pending'   // NOT LIVE - awaiting approval
+        'moderation_status' => 'approved'   // NOT LIVE - awaiting approval
     ],
     'johns-coffee' => [
         'omfid_published' => false,
