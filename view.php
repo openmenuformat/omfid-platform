@@ -108,7 +108,7 @@ $business = $businesses[$omf_id] ?? $businesses['tonys-pizza'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($business['name']); ?> - OMF:ID</title>
+    <title><?php echo htmlspecialchars($business['name']); ?> - OMFID</title>
     
     <!-- Social Media Meta Tags -->
     <meta property="og:title" content="<?php echo htmlspecialchars($business['name']); ?> - OMFID">
@@ -588,7 +588,7 @@ $business = $businesses[$omf_id] ?? $businesses['tonys-pizza'];
         <div class="header-content">
             <a href="/" class="logo">
                 <img src="/assets/logo.jpg" alt="OMFID Logo">
-                OMFID
+                OMF:ID
             </a>
             <div class="header-actions">
                 <button class="theme-toggle" id="themeToggle">
