@@ -40,8 +40,8 @@ $business = $businesses[$omf_id] ?? [
     <title><?php echo htmlspecialchars($business['name']); ?> - OMFID</title>
     
     <!-- Favicon and App Icons -->
-    <link rel="icon" type="image/jpeg" href="https://omfid.com/assets/logo.jpg">
-    <link rel="apple-touch-icon" href="https://omfid.com/assets/logo.jpg">
+    <link rel="icon" type="image/x-icon" href="https://omfid.com/assets/favicon.ico">
+    <link rel="apple-touch-icon" href="https://omfid.com/assets/favicon.ico">
     
     <!-- Social Media Meta Tags -->
     <meta property="og:title" content="<?php echo htmlspecialchars($business['name']); ?> - OMFID">
