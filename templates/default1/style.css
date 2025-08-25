@@ -80,12 +80,13 @@ body {
     align-items: center;
 }
 
-/* Logo with Image */
+/* Logo with Image - FIXED */
 .omfid-logo {
     display: flex !important;
     align-items: center !important;
     text-decoration: none !important;
     transition: all var(--transition) !important;
+    flex-shrink: 0 !important;
 }
 
 .omfid-logo:hover {
@@ -95,10 +96,31 @@ body {
 .omfid-logo-img {
     height: 40px !important;
     width: 40px !important;
+    max-width: 40px !important;
+    max-height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
     border-radius: 8px !important;
     transition: all var(--transition) !important;
     object-fit: contain !important;
     display: block !important;
+}
+
+/* Dark mode logo adjustments */
+[data-theme="dark"] .omfid-logo-img {
+    filter: brightness(1.1) contrast(1.1) !important;
+}
+
+/* Mobile responsive logo */
+@media (max-width: 768px) {
+    .omfid-logo-img {
+        height: 32px !important;
+        width: 32px !important;
+        max-width: 32px !important;
+        max-height: 32px !important;
+        min-width: 32px !important;
+        min-height: 32px !important;
+    }
 }
 
 /* High DPI displays */
