@@ -1,189 +1,231 @@
-// Default1 Template JavaScript - templates/default1/script.js
+// OMFID Default1 Template JavaScript
+// Fixed version to handle missing elements gracefully
 
+// Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 OMFID Template script loading...');
     
-    // Initialize dark mode - SAME KEY AS HOMEPAGE
     initializeDarkMode();
+    setupThemeToggle();
+    setupSettingsDropdown();
+    setupMenuAnimations();
     
-    // Smooth scrolling for menu link
-    const menuLink = document.querySelector('a[href="#menu"]');
-    if (menuLink) {
-        menuLink.addEventListener('click', function(e) {
-            e.preventDefault();
-            document.querySelector('#menu').scrollIntoView({ behavior: 'smooth' });
-        });
+    console.log('✅ OMFID Template script loaded successfully');
+});
 
-    // Upload zone interactions (for future image upload feature)
+// Dark Mode System - CRITICAL: Uses same key as homepage
+function initializeDarkMode() {
+    try {
+        const savedTheme = localStorage.getItem('darkMode') === 'true';
+        const theme = savedTheme ? 'dark' : 'light';
+        
+        document.documentElement.setAttribute('data-theme', theme);
+        updateThemeIcon(theme);
+        
+        console.log('🌙 Dark mode initialized:', theme);
+    } catch (error) {
+        console.error('Error initializing dark mode:', error);
+    }
+}
+
+function setupThemeToggle() {
+    const themeToggle = document.getElementById('themeToggle');
+    
+    if (!themeToggle) {
+        console.warn('Theme toggle button not found');
+        return;
+    }
+    
+    themeToggle.addEventListener('click', () => {
+        try {
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+            // Update DOM immediately
+            document.documentElement.setAttribute('data-theme', newTheme);
+            
+            // Save to localStorage (SAME key as homepage)
+            localStorage.setItem('darkMode', newTheme === 'dark');
+            
+            // Update icon
+            updateThemeIcon(newTheme);
+            
+            console.log('🌙 Theme switched to:', newTheme);
+        } catch (error) {
+            console.error('Error toggling theme:', error);
+        }
+    });
+}
+
+function updateThemeIcon(theme) {
+    const themeIcon = document.querySelector('.theme-icon');
+    if (themeIcon) {
+        themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+}
+
+// Settings Dropdown
+function setupSettingsDropdown() {
+    const settingsBtn = document.getElementById('settingsBtn');
+    const settingsMenu = document.getElementById('settingsMenu');
+
+    if (!settingsBtn || !settingsMenu) {
+        console.warn('Settings dropdown elements not found');
+        return;
     }
 
-    // Enhanced hover effects for menu items
-    document.querySelectorAll('.menu-item').forEach((item, index) => {
-        item.style.animationDelay = `${index * 0.1}s`;
-        
-        item.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-15px) scale(1.05)';
-            this.style.zIndex = '10';
-        });
-        
-        item.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(-10px) scale(1.03)';
-            this.style.zIndex = '1';
-        });
+    settingsBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        settingsMenu.classList.toggle('active');
     });
 
-    // Intersection Observer for scroll animations
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
+    // Close settings menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!settingsBtn.contains(e.target) && !settingsMenu.contains(e.target)) {
+            settingsMenu.classList.remove('active');
+        }
+    });
+}
 
+// Menu Animations and Interactions
+function setupMenuAnimations() {
+    // Animate menu items on scroll (if they exist)
+    const menuItems = document.querySelectorAll('.menu-item');
+    
+    if (menuItems.length === 0) {
+        console.log('No menu items found for animation');
+        return;
+    }
+
+    // Simple fade-in animation
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
+                entry.target.style.opacity = '1';
+                entry.target.style.transform = 'translateY(0)';
             }
         });
-    }, observerOptions);
-
-    document.querySelectorAll('.fade-in-on-scroll').forEach(el => {
-        observer.observe(el);
+    }, {
+        threshold: 0.1,
+        rootMargin: '50px'
     });
 
-    // Gallery items individual animation triggers
-    const galleryObserver = new IntersectionObserver((entries) => {
-        entries.forEach((entry, index) => {
-            if (entry.isIntersecting) {
-                setTimeout(() => {
-                    entry.target.style.animation = `slideInGallery 0.8s ease-out forwards`;
-                }, index * 100);
-            }
-        });
-    }, { threshold: 0.2 });
-
-    document.querySelectorAll('.gallery-item').forEach(item => {
+    menuItems.forEach((item, index) => {
+        // Initial state
         item.style.opacity = '0';
-        galleryObserver.observe(item);
-            });
-    });
-
-    // Header scroll effect - Updated for dark mode
-    let lastScrollY = window.scrollY;
-    window.addEventListener('scroll', () => {
-        const header = document.querySelector('.omfid-header');
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        item.style.transform = 'translateY(20px)';
+        item.style.transition = `opacity 0.6s ease ${index * 0.1}s, transform 0.6s ease ${index * 0.1}s`;
         
-        if (window.scrollY > 100) {
-            header.style.background = isDark 
-                ? 'rgba(30, 41, 59, 0.98)' 
-                : 'rgba(255,255,255,0.98)';
-            header.style.boxShadow = '0 4px 30px rgba(0,0,0,0.12)';
-        } else {
-            header.style.background = isDark 
-                ? 'rgba(30, 41, 59, 0.95)' 
-                : 'rgba(255,255,255,0.95)';
-            header.style.boxShadow = '0 2px 20px rgba(0,0,0,0.08)';
-        }
+        observer.observe(item);
     });
+}
 
-    // Dark mode toggle - EXACTLY SAME AS HOMEPAGE
-    const themeToggle = document.getElementById('themeToggle');
-    const themeIcon = themeToggle.querySelector('.theme-icon');
-
-    themeToggle.addEventListener('click', () => {
-        const currentTheme = document.documentElement.getAttribute('data-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        
-        document.documentElement.setAttribute('data-theme', newTheme);
-        localStorage.setItem('darkMode', newTheme === 'dark');
-        updateThemeIcon(newTheme);
-    });
-
-    function updateThemeIcon(theme) {
-        themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+// View Toggle Functionality
+function switchView(viewType) {
+    const buttons = document.querySelectorAll('.toggle-btn');
+    const menuGrid = document.getElementById('menuGrid');
+    
+    if (!menuGrid) {
+        console.warn('Menu grid not found');
+        return;
     }
-
-    function initializeDarkMode() {
-        // Load saved theme - SAME KEY AS HOMEPAGE
-        const isDark = localStorage.getItem('darkMode') === 'true';
-        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-        updateThemeIcon(isDark ? 'dark' : 'light');
+    
+    // Update button states
+    buttons.forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    
+    // Update grid layout
+    if (viewType === 'list') {
+        menuGrid.style.gridTemplateColumns = '1fr';
+    } else {
+        menuGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(350px, 1fr))';
     }
-    document.querySelectorAll('[data-upload-zone]').forEach(zone => {
-        zone.addEventListener('click', function() {
-            const zoneType = this.dataset.uploadZone;
-            console.log(`Image upload for zone: ${zoneType}`);
-            // Future: Open image upload modal
-            showImageUploadModal(zoneType);
+    
+    console.log('View switched to:', viewType);
+}
+
+// Settings Functions (same as homepage)
+function shareApp() {
+    settingsMenu = document.getElementById('settingsMenu');
+    
+    if (navigator.share) {
+        navigator.share({
+            title: 'OMFID - Open Menu Format Directory',
+            text: 'Discover amazing local businesses on OMFID!',
+            url: window.location.href
+        }).catch(err => console.log('Error sharing:', err));
+    } else {
+        navigator.clipboard.writeText(window.location.href).then(() => {
+            alert('Link copied to clipboard!');
+        }).catch(err => {
+            console.error('Failed to copy link:', err);
+        });
+    }
+    
+    if (settingsMenu) {
+        settingsMenu.classList.remove('active');
+    }
+}
+
+function reportIssue() {
+    const settingsMenu = document.getElementById('settingsMenu');
+    const subject = encodeURIComponent('Issue Report - ' + window.location.href);
+    const body = encodeURIComponent('Please describe the issue you encountered:');
+    
+    window.open(`mailto:support@omfid.com?subject=${subject}&body=${body}`, '_blank');
+    
+    if (settingsMenu) {
+        settingsMenu.classList.remove('active');
+    }
+}
+
+function showAbout() {
+    const settingsMenu = document.getElementById('settingsMenu');
+    
+    alert('OMFID v1.0\n\nOpen Menu Format Directory\nDiscover. Connect. Explore.\n\nPowered by Open Menu Format\n\nBuilt with ❤️ in Bangkok');
+    
+    if (settingsMenu) {
+        settingsMenu.classList.remove('active');
+    }
+}
+
+function changeLanguage() {
+    const languageSelector = document.getElementById('languageSelector');
+    if (languageSelector) {
+        const lang = languageSelector.value;
+        console.log('Language changed to:', lang);
+        // In production, this would translate the content
+    }
+}
+
+// Smooth scrolling for anchor links
+document.addEventListener('DOMContentLoaded', function() {
+    const anchorLinks = document.querySelectorAll('a[href^="#"]');
+    
+    anchorLinks.forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href').substring(1);
+            const target = document.getElementById(targetId);
+            
+            if (target) {
+                target.scrollIntoView({ 
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+            }
         });
     });
-
-    // Remove old theme functions since we have new ones above
 });
 
-// Future function for image upload modal
-function showImageUploadModal(zoneType) {
-    // This will be implemented when we add the image upload system
-    alert(`Image upload for ${zoneType} - Coming soon!\n\nThis will open an upload modal with size guidance.`);
-}
+// Error handling wrapper
+window.addEventListener('error', function(e) {
+    console.error('JavaScript error in OMFID template:', e.error);
+});
 
-// Business-specific functions (use window.businessData from PHP)
-function getDirections() {
-    if (window.businessData && window.businessData.address) {
-        const address = encodeURIComponent(window.businessData.name + ' ' + window.businessData.address);
-        window.open(`https://maps.google.com/?q=${address}`, '_blank');
-    }
-}
-
-// Share business function
-function shareBusiness() {
-    if (navigator.share && window.businessData) {
-        navigator.share({
-            title: window.businessData.name,
-            text: `Check out ${window.businessData.name} on OMFID!`,
-            url: window.location.href
-        });
-    } else {
-        navigator.clipboard.writeText(window.location.href);
-        // Show toast notification
-        showToast('Link copied to clipboard!');
-    }
-}
-
-// Simple toast notification
-function showToast(message) {
-    const toast = document.createElement('div');
-    toast.textContent = message;
-    toast.style.cssText = `
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        background: var(--gray-800);
-        color: white;
-        padding: 12px 24px;
-        border-radius: 8px;
-        z-index: 1000;
-        font-size: 14px;
-        animation: slideInUp 0.3s ease;
-    `;
-    
-    document.body.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.style.animation = 'slideOutDown 0.3s ease forwards';
-        setTimeout(() => toast.remove(), 300);
-    }, 2000);
-}
-
-// Add toast animations to document
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideInUp {
-        from { transform: translateY(100%); opacity: 0; }
-        to { transform: translateY(0); opacity: 1; }
-    }
-    @keyframes slideOutDown {
-        from { transform: translateY(0); opacity: 1; }
-        to { transform: translateY(100%); opacity: 0; }
-    }
-`;
-document.head.appendChild(style);
+// Make functions globally available
+window.switchView = switchView;
+window.shareApp = shareApp;
+window.reportIssue = reportIssue;
+window.showAbout = showAbout;
+window.changeLanguage = changeLanguage;
