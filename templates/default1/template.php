@@ -1,6 +1,6 @@
 <?php
 // templates/default1/template.php
-// This file uses the $business data from view.php
+// This file uses the $business data from view.php - RESTORED ORIGINAL LAYOUT
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -20,7 +20,7 @@
     <meta property="og:url" content="https://omfid.com/<?php echo htmlspecialchars($omf_id); ?>">
     
     <!-- Load the template CSS file -->
-    <link rel="stylesheet" href="templates/default1/style.css">
+    <link rel="stylesheet" href="/templates/default1/style.css">
     
     <!-- 🎨 BUSINESS COLOR CUSTOMIZATION WITH DARK MODE FIX -->
     <style>
@@ -144,7 +144,7 @@
                             <?php if (!empty($item['tags'])): ?>
                                 <div class="menu-item-tags">
                                     <?php foreach ($item['tags'] as $tag): ?>
-                                        <span class="tag <?php echo strtolower(str_replace(' ', '-', $tag)); ?>">
+                                        <span class="tag <?php echo strtolower(str_replace([' ', "'"], ['-', ''], $tag)); ?>">
                                             <?php echo htmlspecialchars($tag); ?>
                                         </span>
                                     <?php endforeach; ?>
@@ -190,7 +190,7 @@
     </div>
 
     <!-- Load JavaScript -->
-    <script src="templates/default1/script.js"></script>
+    <script src="/templates/default1/script.js"></script>
     
     <!-- Business-specific JavaScript -->
     <script>
