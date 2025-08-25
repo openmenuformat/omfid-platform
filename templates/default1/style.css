@@ -19,6 +19,17 @@
     --gray-800: #1a202c;
     --gray-900: #171923;
     
+    /* Dark mode will override these */
+    --bg-primary: var(--white);
+    --bg-secondary: var(--gray-50);
+    --bg-tertiary: var(--gray-100);
+    --text-primary: var(--gray-700);
+    --text-secondary: var(--gray-600);
+    --text-muted: var(--gray-400);
+    --border-color: var(--gray-200);
+    --card-bg: var(--white);
+    --header-bg: var(--white);
+    
     /* Shadows */
     --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
     --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -42,14 +53,15 @@
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.6;
-    color: var(--gray-700);
-    background: var(--gray-50);
+    color: var(--text-primary);
+    background: var(--bg-secondary);
     overflow-x: hidden;
+    transition: background-color var(--transition), color var(--transition);
 }
 
 /* Header */
 .omfid-header {
-    background: rgba(255,255,255,0.95);
+    background: var(--header-bg);
     backdrop-filter: blur(20px);
     box-shadow: 0 2px 20px rgba(0,0,0,0.08);
     padding: 15px 0;
@@ -68,14 +80,33 @@ body {
     align-items: center;
 }
 
+/* Logo with Image */
 .omfid-logo {
-    font-size: 24px;
-    font-weight: 800;
-    background: var(--gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    text-decoration: none;
-    letter-spacing: -0.5px;
+    display: flex !important;
+    align-items: center !important;
+    text-decoration: none !important;
+    transition: all var(--transition) !important;
+}
+
+.omfid-logo:hover {
+    transform: scale(1.05) !important;
+}
+
+.omfid-logo-img {
+    height: 40px !important;
+    width: 40px !important;
+    border-radius: 8px !important;
+    transition: all var(--transition) !important;
+    object-fit: contain !important;
+    display: block !important;
+}
+
+/* High DPI displays */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+    .omfid-logo-img {
+        image-rendering: -webkit-optimize-contrast !important;
+        image-rendering: crisp-edges !important;
+    }
 }
 
 .omfid-actions {
@@ -101,8 +132,8 @@ body {
 }
 
 .omfid-btn.secondary {
-    background: var(--gray-100);
-    color: var(--gray-600);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
 }
 
 .omfid-btn:hover {
@@ -293,7 +324,7 @@ body {
 
 /* Menu Section */
 .menu-section {
-    background: white;
+    background: var(--card-bg);
     border-radius: 30px;
     padding: 60px 50px;
     margin-bottom: 80px;
@@ -335,7 +366,7 @@ body {
 }
 
 .section-subtitle {
-    color: var(--gray-600);
+    color: var(--text-secondary);
     font-size: 1.2rem;
     max-width: 600px;
     margin: 0 auto;
@@ -351,11 +382,11 @@ body {
 }
 
 .menu-item {
-    background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
+    background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
     border-radius: 20px;
     padding: 30px;
     transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 1px solid var(--gray-200);
+    border: 1px solid var(--border-color);
     position: relative;
     overflow: hidden;
     cursor: pointer;
@@ -381,7 +412,7 @@ body {
 .menu-item:hover {
     transform: translateY(-10px) scale(1.03);
     box-shadow: 0 25px 50px rgba(0,0,0,0.15);
-    background: white;
+    background: var(--card-bg);
 }
 
 .menu-item-header {
@@ -394,7 +425,7 @@ body {
 .menu-item-name {
     font-size: 1.5rem;
     font-weight: 800;
-    color: var(--gray-800);
+    color: var(--text-primary);
     flex: 1;
     letter-spacing: -0.5px;
 }
@@ -409,7 +440,7 @@ body {
 }
 
 .menu-item-description {
-    color: var(--gray-600);
+    color: var(--text-secondary);
     font-size: 1rem;
     line-height: 1.7;
     margin-bottom: 20px;
@@ -424,19 +455,19 @@ body {
 
 .tag {
     padding: 6px 16px;
-    background: var(--gray-100);
-    border: 1px solid var(--gray-200);
+    background: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
     border-radius: 20px;
     font-size: 0.85rem;
-    color: var(--gray-600);
+    color: var(--text-secondary);
     font-weight: 600;
     letter-spacing: 0.3px;
     transition: all var(--transition);
 }
 
 .menu-item:hover .tag {
-    background: var(--gray-50);
-    border-color: var(--gray-300);
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
 }
 
 .tag.popular {
@@ -473,14 +504,14 @@ body {
 }
 
 .gallery-item {
-    background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
+    background: linear-gradient(135deg, var(--bg-tertiary), var(--bg-secondary));
     border-radius: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border: 2px dashed var(--gray-300);
-    color: var(--gray-400);
+    border: 2px dashed var(--border-color);
+    color: var(--text-muted);
     font-size: 16px;
     font-weight: 600;
     transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -547,8 +578,8 @@ body {
     border-color: var(--primary-color);
     transform: scale(1.05);
     box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-    background: white;
-    color: var(--gray-600);
+    background: var(--card-bg);
+    color: var(--text-secondary);
 }
 
 /* Animations */
@@ -607,6 +638,37 @@ body {
 
 .footer a:hover {
     color: var(--secondary-color);
+}
+
+/* Dark Mode Styles - Same as homepage */
+[data-theme="dark"] {
+    --bg-primary: #0f172a;
+    --bg-secondary: #1e293b;
+    --bg-tertiary: #334155;
+    --text-primary: #f8fafc;
+    --text-secondary: #cbd5e1;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --card-bg: #1e293b;
+    --header-bg: #1e293b;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.4);
+    --shadow-2xl: 0 25px 50px rgba(0, 0, 0, 0.6);
+}
+
+[data-theme="dark"] .omfid-logo-img {
+    filter: brightness(1.1) contrast(1.1);
+}
+
+[data-theme="dark"] .omfid-btn.primary:hover {
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+[data-theme="dark"] .omfid-btn.secondary:hover {
+    background: var(--bg-primary);
 }
 
 /* Scroll animations */

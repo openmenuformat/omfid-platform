@@ -2,6 +2,9 @@
 
 document.addEventListener('DOMContentLoaded', function() {
     
+    // Initialize dark mode - SAME KEY AS HOMEPAGE
+    initializeDarkMode();
+    
     // Smooth scrolling for menu link
     const menuLink = document.querySelector('a[href="#menu"]');
     if (menuLink) {
@@ -9,6 +12,8 @@ document.addEventListener('DOMContentLoaded', function() {
             e.preventDefault();
             document.querySelector('#menu').scrollIntoView({ behavior: 'smooth' });
         });
+
+    // Upload zone interactions (for future image upload feature)
     }
 
     // Enhanced hover effects for menu items
@@ -58,22 +63,51 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.gallery-item').forEach(item => {
         item.style.opacity = '0';
         galleryObserver.observe(item);
+            });
     });
 
-    // Header scroll effect
+    // Header scroll effect - Updated for dark mode
     let lastScrollY = window.scrollY;
     window.addEventListener('scroll', () => {
         const header = document.querySelector('.omfid-header');
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        
         if (window.scrollY > 100) {
-            header.style.background = 'rgba(255,255,255,0.98)';
+            header.style.background = isDark 
+                ? 'rgba(30, 41, 59, 0.98)' 
+                : 'rgba(255,255,255,0.98)';
             header.style.boxShadow = '0 4px 30px rgba(0,0,0,0.12)';
         } else {
-            header.style.background = 'rgba(255,255,255,0.95)';
+            header.style.background = isDark 
+                ? 'rgba(30, 41, 59, 0.95)' 
+                : 'rgba(255,255,255,0.95)';
             header.style.boxShadow = '0 2px 20px rgba(0,0,0,0.08)';
         }
     });
 
-    // Upload zone interactions (for future image upload feature)
+    // Dark mode toggle - EXACTLY SAME AS HOMEPAGE
+    const themeToggle = document.getElementById('themeToggle');
+    const themeIcon = themeToggle.querySelector('.theme-icon');
+
+    themeToggle.addEventListener('click', () => {
+        const currentTheme = document.documentElement.getAttribute('data-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+        
+        document.documentElement.setAttribute('data-theme', newTheme);
+        localStorage.setItem('darkMode', newTheme === 'dark');
+        updateThemeIcon(newTheme);
+    });
+
+    function updateThemeIcon(theme) {
+        themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+    }
+
+    function initializeDarkMode() {
+        // Load saved theme - SAME KEY AS HOMEPAGE
+        const isDark = localStorage.getItem('darkMode') === 'true';
+        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+        updateThemeIcon(isDark ? 'dark' : 'light');
+    }
     document.querySelectorAll('[data-upload-zone]').forEach(zone => {
         zone.addEventListener('click', function() {
             const zoneType = this.dataset.uploadZone;
@@ -83,32 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Dark mode toggle (if button exists)
-    const themeToggle = document.querySelector('.omfid-btn.secondary');
-    if (themeToggle && themeToggle.textContent.includes('🌙')) {
-        themeToggle.addEventListener('click', toggleTheme);
-    }
-
-    function toggleTheme() {
-        document.body.classList.toggle('dark-theme');
-        const isDark = document.body.classList.contains('dark-theme');
-        localStorage.setItem('theme', isDark ? 'dark' : 'light');
-        updateThemeIcon(isDark);
-    }
-
-    function updateThemeIcon(isDark) {
-        const themeToggle = document.querySelector('.omfid-btn.secondary');
-        if (themeToggle) {
-            themeToggle.textContent = isDark ? '☀️' : '🌙';
-        }
-    }
-
-    // Load saved theme
-    const savedTheme = localStorage.getItem('theme');
-    if (savedTheme === 'dark') {
-        document.body.classList.add('dark-theme');
-        updateThemeIcon(true);
-    }
+    // Remove old theme functions since we have new ones above
 });
 
 // Future function for image upload modal

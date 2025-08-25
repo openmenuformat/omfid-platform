@@ -32,9 +32,13 @@
     <!-- OMFID Header -->
     <header class="omfid-header">
         <nav class="omfid-nav">
-            <a href="/" class="omfid-logo">OMFID</a>
+            <a href="/" class="omfid-logo">
+                <img src="/assets/logo.jpg" alt="OMFID" class="omfid-logo-img">
+            </a>
             <div class="omfid-actions">
-                <button class="omfid-btn secondary">🌙</button>
+                <button class="omfid-btn secondary theme-toggle" id="themeToggle">
+                    <span class="theme-icon">🌙</span>
+                </button>
                 <a href="tel:<?php echo $business['phone']; ?>" class="omfid-btn secondary">📞 Call</a>
                 <a href="https://make.openmenuformat.com" target="_blank" class="omfid-btn primary">+ Create Menu</a>
             </div>
