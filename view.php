@@ -24,57 +24,13 @@ $businesses = [
     ]
 ];
 
-// UPDATED: Publish status and moderation logic
-$publishStatus = [
-    'tonys-pizza' => [
-        'omfid_published' => true,
-        'moderation_status' => 'approved'  // LIVE on OMFID
-    ],
-    'marias-spa' => [
-        'omfid_published' => true,
-        'moderation_status' => 'approved'   // NOT LIVE - awaiting approval
-    ],
-    'johns-coffee' => [
-        'omfid_published' => false,
-        'moderation_status' => 'draft'     // NOT LIVE - not published
-    ]
+// Get business data or use default
+$business = $businesses[$omf_id] ?? [
+    'name' => ucwords(str_replace('-', ' ', $omf_id)),
+    'description' => 'Welcome to our business',
+    'address' => 'Bangkok, Thailand',
+    'type' => '🏪 Business'
 ];
-
-// Function to check if business should be shown
-function getPublishedBusiness($omf_id) {
-    global $businesses, $publishStatus;
-    
-    // Validate slug format first
-    if (!preg_match('/^[a-z0-9-]+$/', $omf_id)) {
-        return null;
-    }
-    
-    // Check if business exists
-    if (!isset($businesses[$omf_id])) {
-        return null;
-    }
-    
-    // Get publish status for this business
-    $status = $publishStatus[$omf_id] ?? ['omfid_published' => false, 'moderation_status' => 'draft'];
-    
-    // CRITICAL: Only show if BOTH published AND approved
-    if ($status['omfid_published'] === true && $status['moderation_status'] === 'approved') {
-        return $businesses[$omf_id];
-    }
-    
-    // Business exists but not ready to show
-    return null;
-}
-
-// Get business data with new logic
-$business = getPublishedBusiness($omf_id);
-
-// Handle unpublished or non-approved business
-if (!$business) {
-    // Show "Coming Soon" or "Not Found" page
-    include 'not-found.php';
-    exit;
-}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -936,8 +892,8 @@ if (!$business) {
         const themeToggle = document.getElementById('themeToggle');
         const themeIcon = themeToggle.querySelector('.theme-icon');
 
-        // Load saved theme
-        const savedTheme = localStorage.getItem('omfid-theme') || 'light';
+        // Load saved theme - SAME KEY AS HOMEPAGE
+        const savedTheme = localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', savedTheme);
         updateThemeIcon(savedTheme);
 
@@ -946,7 +902,7 @@ if (!$business) {
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             
             document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('omfid-theme', newTheme);
+            localStorage.setItem('darkMode', newTheme === 'dark');
             updateThemeIcon(newTheme);
         });
 

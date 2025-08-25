@@ -408,9 +408,9 @@
     </div>
 
     <script>
-        // Dark Mode Toggle (Same as other pages)
+        // Dark Mode Toggle (Same localStorage key as homepage)
         function initTheme() {
-            const savedTheme = localStorage.getItem('omfid-theme') || 'light';
+            const savedTheme = localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
             document.documentElement.setAttribute('data-theme', savedTheme);
             updateThemeIcons(savedTheme);
         }
@@ -427,7 +427,7 @@
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             
             document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('omfid-theme', newTheme);
+            localStorage.setItem('darkMode', newTheme === 'dark');
             updateThemeIcons(newTheme);
         }
 
