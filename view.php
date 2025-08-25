@@ -108,10 +108,10 @@ $business = $businesses[$omf_id] ?? $businesses['tonys-pizza'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($business['name']); ?> - OMFID</title>
+    <title><?php echo htmlspecialchars($business['name']); ?> - OMF:ID</title>
     
     <!-- Social Media Meta Tags -->
-    <meta property="og:title" content="<?php echo htmlspecialchars($business['name']); ?> - OMFID">
+    <meta property="og:title" content="<?php echo htmlspecialchars($business['name']); ?> - OMF:ID">
     <meta property="og:description" content="<?php echo htmlspecialchars($business['description']); ?>">
     <meta property="og:image" content="https://omfid.com/assets/preview.jpg">
     <meta property="og:url" content="https://omfid.com/<?php echo htmlspecialchars($omf_id); ?>">
@@ -587,7 +587,7 @@ $business = $businesses[$omf_id] ?? $businesses['tonys-pizza'];
     <header class="header">
         <div class="header-content">
             <a href="/" class="logo">
-                <img src="/assets/logo.jpg" alt="OMFID Logo">
+                <img src="/assets/logo.jpg" alt="OMF:ID Logo">
                 OMF:ID
             </a>
             <div class="header-actions">
@@ -682,40 +682,56 @@ $business = $businesses[$omf_id] ?? $businesses['tonys-pizza'];
     </footer>
 
     <script>
-        // Dark Mode Toggle - SAME TOKEN AS HOMEPAGE
-        function initializeDarkMode() {
-            const themeToggle = document.getElementById('themeToggle');
-            const themeIcon = themeToggle.querySelector('.theme-icon');
-
-            // Use EXACT SAME localStorage key as homepage
-            const savedTheme = localStorage.getItem('darkMode') === 'true';
-            const theme = savedTheme ? 'dark' : 'light';
+        // Dark Mode - Initialize IMMEDIATELY (not waiting for DOM)
+        (function() {
+            console.log('🌙 Initializing dark mode...');
             
-            document.documentElement.setAttribute('data-theme', theme);
-            updateThemeIcon(theme);
+            // Use EXACT same key as homepage
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            console.log('🌙 localStorage darkMode:', localStorage.getItem('darkMode'), 'isDark:', isDarkMode);
+            
+            // Set theme immediately to prevent flash
+            document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+            console.log('🌙 Set data-theme to:', isDarkMode ? 'dark' : 'light');
+        })();
 
-            themeToggle.addEventListener('click', () => {
+        // Setup toggle after DOM loads
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = themeToggle?.querySelector('.theme-icon');
+            
+            if (!themeToggle || !themeIcon) {
+                console.error('🌙 Theme toggle elements not found!');
+                return;
+            }
+            
+            // Set initial icon
+            const currentTheme = document.documentElement.getAttribute('data-theme');
+            themeIcon.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
+            console.log('🌙 Initial icon set for theme:', currentTheme);
+            
+            // Toggle handler
+            themeToggle.addEventListener('click', function() {
                 const currentTheme = document.documentElement.getAttribute('data-theme');
                 const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
                 
-                // Update DOM immediately
+                console.log('🌙 Switching from', currentTheme, 'to', newTheme);
+                
+                // Update DOM
                 document.documentElement.setAttribute('data-theme', newTheme);
                 
-                // Save using EXACT SAME key as homepage
-                localStorage.setItem('darkMode', newTheme === 'dark');
+                // Update localStorage with EXACT same format as homepage
+                localStorage.setItem('darkMode', newTheme === 'dark' ? 'true' : 'false');
                 
-                updateThemeIcon(newTheme);
+                // Update icon
+                themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
                 
-                console.log('🌙 Theme synced:', newTheme, 'darkMode:', newTheme === 'dark');
+                console.log('🌙 Updated localStorage to:', localStorage.getItem('darkMode'));
+                console.log('🌙 Theme switch complete:', newTheme);
             });
-
-            function updateThemeIcon(theme) {
-                themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
-            }
-        }
-
-        // Initialize dark mode when page loads
-        document.addEventListener('DOMContentLoaded', initializeDarkMode);
+            
+            console.log('✅ Dark mode setup complete');
+        });
 
         // Business Actions
         function handleCall() {
