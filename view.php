@@ -46,13 +46,29 @@ $business = $businesses[$omf_id] ?? [
     <!-- Social Media Meta Tags -->
     <meta property="og:title" content="<?php echo htmlspecialchars($business['name']); ?> - OMFID">
     <meta property="og:description" content="<?php echo htmlspecialchars($business['description']); ?>">
-    <meta property="og:image" content="https://omfid.com/assets/logo.jpg">
-    <meta property="og:image:width" content="1000">
-    <meta property="og:image:height" content="1000">
+    <meta property="og:image" content="https://omfid.com/assets/preview-business.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/jpeg">
     <meta property="og:url" content="https://omfid.com/<?php echo htmlspecialchars($omf_id); ?>">
-    <meta property="og:type" content="restaurant.menu">
-    <meta name="twitter:image" content="https://omfid.com/assets/logo.jpg">
-    <meta name="twitter:card" content="summary">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="OMFID">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@omfid">
+    <meta name="twitter:title" content="<?php echo htmlspecialchars($business['name']); ?> - OMFID">
+    <meta name="twitter:description" content="<?php echo htmlspecialchars($business['description']); ?>">
+    <meta name="twitter:image" content="https://omfid.com/assets/preview-business.jpg">
+    
+    <!-- Apple Touch Icon -->
+    <link rel="apple-touch-icon" href="https://omfid.com/assets/icon-180.png">
+    <link rel="apple-touch-icon-precomposed" href="https://omfid.com/assets/icon-180.png">
+    
+    <!-- Safari Specific -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     
     <style>
         /* Modern CSS Variables with Dark Mode Support */

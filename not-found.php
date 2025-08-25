@@ -6,14 +6,21 @@
     <title>Menu Not Available - OMFID</title>
     
     <!-- Favicon and App Icons -->
-    <link rel="icon" type="image/jpeg" href="https://omfid.com/assets/logo.jpg">
-    <link rel="apple-touch-icon" href="https://omfid.com/assets/logo.jpg">
+    <link rel="icon" type="image/x-icon" href="https://omfid.com/assets/favicon.ico">
+    <link rel="apple-touch-icon" href="https://omfid.com/assets/icon-180.png">
     
     <!-- Meta Tags -->
     <meta name="description" content="This menu is not available or hasn't been published yet. Create your own menu with OMFID.">
     <meta property="og:title" content="Menu Not Available - OMFID">
     <meta property="og:description" content="This menu is not available or hasn't been published yet.">
-    <meta property="og:image" content="https://omfid.com/assets/logo.jpg">
+    <meta property="og:image" content="https://omfid.com/assets/preview-404.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:type" content="website">
+    
+    <!-- Safari Specific -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     
     <style>
         /* Modern CSS Variables with Dark Mode Support */
