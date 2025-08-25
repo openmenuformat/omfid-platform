@@ -2,6 +2,16 @@
 // Get business ID from URL
 $omf_id = $_GET['id'] ?? 'unknown';
 
+// At the top of view.php, add validation
+$validBusinesses = ['tonys-pizza', 'marias-spa', 'johns-coffee'];
+
+if (!in_array($omf_id, $validBusinesses)) {
+    include 'not-found.php';
+    exit;
+}
+
+
+
 // Test data for businesses
 $businesses = [
     'tonys-pizza' => [
