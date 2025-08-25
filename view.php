@@ -108,7 +108,7 @@ $business = $businesses[$omf_id] ?? $businesses['tonys-pizza'];
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($business['name']); ?> - OMFID</title>
+    <title><?php echo htmlspecialchars($business['name']); ?> - OMF:ID</title>
     
     <!-- Social Media Meta Tags -->
     <meta property="og:title" content="<?php echo htmlspecialchars($business['name']); ?> - OMFID">
@@ -662,7 +662,7 @@ $business = $businesses[$omf_id] ?? $businesses['tonys-pizza'];
         <?php if (!empty($business['gallery'])): ?>
             <section class="gallery-section">
                 <div class="section-header">
-                    <h2 class="section-title">📸 Gallery</h2>
+                    <h2 class="section-title"></h2>
                 </div>
                 <div class="gallery-grid">
                     <?php foreach ($business['gallery'] as $title => $layout): ?>
