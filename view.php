@@ -678,7 +678,7 @@ $business = $businesses[$omf_id] ?? $businesses['tonys-pizza'];
 
     <!-- Footer -->
     <footer class="footer">
-        <p>Powered by <a href="https://openmenuformat.com" target="_blank">Open Menu Format</a> • Made with the <strong>Snack House</strong> template</p>
+        <p>Powered by <a href="https://openmenuformat.com" target="_blank">Open Menu Format</a> • Made with the <strong>free1</strong> template</p>
     </footer>
 
     <script>
