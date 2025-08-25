@@ -662,7 +662,7 @@ $business = $businesses[$omf_id] ?? $businesses['tonys-pizza'];
         <?php if (!empty($business['gallery'])): ?>
             <section class="gallery-section">
                 <div class="section-header">
-                    <h2 class="section-title"></h2>
+                    <h2 class="section-title">📸 Gallery</h2>
                 </div>
                 <div class="gallery-grid">
                     <?php foreach ($business['gallery'] as $title => $layout): ?>
@@ -678,31 +678,44 @@ $business = $businesses[$omf_id] ?? $businesses['tonys-pizza'];
 
     <!-- Footer -->
     <footer class="footer">
-        <p>Powered by <a href="https://openmenuformat.com" target="_blank">Open Menu Format</a> • Made with the <strong>free1</strong> template</p>
+        <p>Powered by <a href="https://openmenuformat.com" target="_blank">Open Menu Format</a> • Made with the <strong>Snack House</strong> template</p>
     </footer>
 
     <script>
-        // Dark Mode Toggle
-        const themeToggle = document.getElementById('themeToggle');
-        const themeIcon = themeToggle.querySelector('.theme-icon');
+        // Dark Mode Toggle - SAME TOKEN AS HOMEPAGE
+        function initializeDarkMode() {
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = themeToggle.querySelector('.theme-icon');
 
-        // Load saved theme
-        const savedTheme = localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
-        updateThemeIcon(savedTheme);
-
-        themeToggle.addEventListener('click', () => {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            // Use EXACT SAME localStorage key as homepage
+            const savedTheme = localStorage.getItem('darkMode') === 'true';
+            const theme = savedTheme ? 'dark' : 'light';
             
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('darkMode', newTheme === 'dark');
-            updateThemeIcon(newTheme);
-        });
+            document.documentElement.setAttribute('data-theme', theme);
+            updateThemeIcon(theme);
 
-        function updateThemeIcon(theme) {
-            themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                // Update DOM immediately
+                document.documentElement.setAttribute('data-theme', newTheme);
+                
+                // Save using EXACT SAME key as homepage
+                localStorage.setItem('darkMode', newTheme === 'dark');
+                
+                updateThemeIcon(newTheme);
+                
+                console.log('🌙 Theme synced:', newTheme, 'darkMode:', newTheme === 'dark');
+            });
+
+            function updateThemeIcon(theme) {
+                themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+            }
         }
+
+        // Initialize dark mode when page loads
+        document.addEventListener('DOMContentLoaded', initializeDarkMode);
 
         // Business Actions
         function handleCall() {
