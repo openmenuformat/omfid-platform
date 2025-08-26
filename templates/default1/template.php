@@ -165,5 +165,19 @@
             window.open(`https://maps.google.com/?q=${address}`, '_blank');
         }
     </script>
+<script>
+// Force dark mode application after everything loads
+document.addEventListener('DOMContentLoaded', function() {
+    const isDarkMode = localStorage.getItem('darkMode') === 'true';
+    console.log('Force applying theme:', isDarkMode ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+    
+    // Update the theme icon
+    const themeIcon = document.querySelector('.theme-icon');
+    if (themeIcon) {
+        themeIcon.textContent = isDarkMode ? '☀️' : '🌙';
+    }
+});
+</script>
 </body>
 </html>
