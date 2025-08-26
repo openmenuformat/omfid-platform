@@ -772,3 +772,187 @@ body {
         margin-bottom: 50px;
     }
 }
+/* === DARK MODE OVERRIDES === */
+/* Add this to the bottom of templates/default1/style.css */
+
+[data-theme="dark"] {
+  /* Override the base color system for dark mode */
+  --white: #1a202c;
+  --gray-50: #2d3748;
+  --gray-100: #4a5568;
+  --gray-200: #718096;
+  --gray-300: #a0aec0;
+  --gray-400: #cbd5e0;
+  --gray-500: #e2e8f0;
+  --gray-600: #edf2f7;
+  --gray-700: #f7fafc;
+  --gray-800: #ffffff;
+  --gray-900: #ffffff;
+
+  /* Dark mode specific overrides */
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-tertiary: #334155;
+  --text-primary: #f8fafc;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  --border-color: #334155;
+  --card-bg: #1e293b;
+
+  /* Slightly adjust brand colors for dark mode contrast */
+  --primary-color: #6366f1;
+  --secondary-color: #8b5cf6;
+  --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+}
+
+/* Body and main elements */
+[data-theme="dark"] body {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+/* Header */
+[data-theme="dark"] .omfid-header {
+  background: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .omfid-btn.secondary {
+  background: var(--bg-tertiary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .omfid-btn.secondary:hover {
+  border-color: var(--primary-color);
+  background: var(--border-color);
+}
+
+/* Hero section */
+[data-theme="dark"] .hero {
+  background: var(--gradient);
+}
+
+[data-theme="dark"] .hero-image-placeholder {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border: 2px dashed var(--border-color);
+}
+
+/* Menu section */
+[data-theme="dark"] .menu-section {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .section-title {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .section-subtitle {
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .menu-item {
+  background: var(--bg-tertiary);
+  border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .menu-item:hover {
+  border-color: var(--primary-color);
+  box-shadow: 0 5px 20px rgba(99, 102, 241, 0.2);
+}
+
+[data-theme="dark"] .menu-item-name {
+  color: var(--text-primary);
+}
+
+[data-theme="dark"] .menu-item-description {
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .menu-item-price {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Tags */
+[data-theme="dark"] .tag {
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .tag.popular {
+  background: rgba(255, 152, 0, 0.2);
+  color: #ffa726;
+  border-color: rgba(255, 152, 0, 0.3);
+}
+
+[data-theme="dark"] .tag.veg {
+  background: rgba(76, 175, 80, 0.2);
+  color: #66bb6a;
+  border-color: rgba(76, 175, 80, 0.3);
+}
+
+[data-theme="dark"] .tag.spicy {
+  background: rgba(255, 68, 68, 0.2);
+  color: #ef5350;
+  border-color: rgba(255, 68, 68, 0.3);
+}
+
+/* Gallery */
+[data-theme="dark"] .gallery-item {
+  background: var(--bg-tertiary);
+  color: var(--text-secondary);
+  border: 2px dashed var(--border-color);
+}
+
+[data-theme="dark"] .gallery-item:hover {
+  border-color: var(--primary-color);
+}
+
+/* Footer */
+[data-theme="dark"] .footer {
+  background: var(--bg-primary);
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border-color);
+}
+
+[data-theme="dark"] .footer a {
+  color: var(--primary-color);
+}
+
+/* Business type badge */
+[data-theme="dark"] .business-type {
+  color: var(--text-secondary);
+}
+
+/* Hero buttons */
+[data-theme="dark"] .hero-btn.secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+[data-theme="dark"] .hero-btn.secondary:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Theme toggle specific styling */
+[data-theme="dark"] .theme-toggle {
+  background: var(--bg-tertiary);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .theme-toggle:hover {
+  border-color: var(--primary-color);
+  transform: scale(1.05);
+}
+
+/* Ensure smooth transitions */
+* {
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
