@@ -2,736 +2,788 @@
 // Get business ID from URL
 $omf_id = $_GET['id'] ?? 'unknown';
 
-// Business data
+// Validation
+$validBusinesses = ['tonys-pizza', 'marias-spa', 'johns-coffee'];
+
+if (!in_array($omf_id, $validBusinesses)) {
+    http_response_code(404);
+    echo "Business not found";
+    exit;
+}
+
+// Test data for businesses
 $businesses = [
     'tonys-pizza' => [
         'name' => "Tony's Pizza Bangkok",
         'description' => 'Authentic Italian pizza and pasta in the heart of Bangkok',
-        'subtitle' => 'Fresh ingredients, traditional recipes, modern atmosphere.',
-        'address' => 'Sukhumvit Soi 24',
-        'hours' => 'Open until 11 PM',
-        'type' => '🍕 ITALIAN RESTAURANT',
-        'color_primary' => '#667eea',
-        'color_secondary' => '#764ba2',
-        'menu_section' => [
-            'title' => 'Our Signature Pizzas',
-            'subtitle' => 'Handcrafted with love using the finest imported Italian ingredients and our signature wood-fired oven.',
-            'items' => [
-                [
-                    'name' => 'Margherita Pizza',
-                    'price' => '350',
-                    'description' => 'Classic Italian pizza with San Marzano tomato sauce, fresh mozzarella di bufala, organic basil, and extra virgin olive oil on our signature wood-fired crust.',
-                    'tags' => ['Vegetarian', 'Popular']
-                ],
-                [
-                    'name' => 'Pepperoni Supreme',
-                    'price' => '420',
-                    'description' => 'Loaded with double pepperoni, premium mozzarella cheese, bell peppers, red onions, and our signature spicy tomato sauce. A crowd favorite!',
-                    'tags' => ['Spicy', 'Popular']
-                ],
-                [
-                    'name' => 'Quattro Stagioni',
-                    'price' => '480',
-                    'description' => 'Four seasons pizza featuring artichokes, mushrooms, ham, and olives on different quarters. A true Italian masterpiece representing the four seasons.',
-                    'tags' => ['Signature']
-                ],
-                [
-                    'name' => 'Truffle & Arugula',
-                    'price' => '680',
-                    'description' => 'Premium white pizza with truffle oil, fresh arugula, parmesan shavings, and mozzarella. Finished with a drizzle of aged balsamic reduction.',
-                    'tags' => ['Vegetarian', 'Premium']
-                ],
-                [
-                    'name' => 'Diavola',
-                    'price' => '390',
-                    'description' => 'Spicy salami, mozzarella, fresh chilies, and our fiery tomato sauce. Perfect for those who love it hot with freshly cracked black pepper.',
-                    'tags' => ['Spicy']
-                ],
-                [
-                    'name' => 'Carbonara Pizza',
-                    'price' => '450',
-                    'description' => 'Our signature fusion creation combining the best of both worlds with cream sauce, crispy pancetta, farm-fresh egg yolk, and pecorino romano.',
-                    'tags' => ['Chef\'s Special', 'Popular']
-                ]
-            ]
-        ],
-        'gallery' => [
-            'Wood Fire Oven' => 'Landscape',
-            'Fresh Ingredients' => 'Square',
-            'Restaurant Interior' => 'Portrait',
-            'Signature Pizza' => 'Square',
-            'Chef at Work' => 'Wide',
-            'Happy Customers' => 'Landscape'
-        ]
+        'address' => 'Sukhumvit Soi 24, Bangkok 10110',
+        'type' => '🍕 Italian Restaurant'
     ],
     'marias-spa' => [
         'name' => "Maria's Thai Massage & Spa",
         'description' => 'Traditional Thai massage and relaxation spa',
-        'subtitle' => 'Ancient healing techniques in modern comfort.',
-        'address' => 'Silom Road',
-        'hours' => 'Open until 10 PM',
-        'type' => '💆 SPA & WELLNESS',
-        'color_primary' => '#48bb78',
-        'color_secondary' => '#38a169',
-        'menu_section' => [
-            'title' => 'Signature Treatments',
-            'subtitle' => 'Traditional Thai healing techniques combined with modern spa luxury for ultimate relaxation.',
-            'items' => [
-                [
-                    'name' => 'Traditional Thai Massage',
-                    'price' => '600/hr',
-                    'description' => 'Full body traditional Thai massage focusing on pressure points and stretching techniques passed down through generations.',
-                    'tags' => ['Popular', 'Traditional']
-                ],
-                [
-                    'name' => 'Aromatherapy Oil Massage',
-                    'price' => '800/hr',
-                    'description' => 'Relaxing oil massage with your choice of essential oils including lavender, eucalyptus, and lemongrass.',
-                    'tags' => ['Relaxing', 'Premium']
-                ],
-                [
-                    'name' => 'Foot Reflexology',
-                    'price' => '400/45min',
-                    'description' => 'Traditional foot massage focusing on reflex points that correspond to different organs and systems.',
-                    'tags' => ['Popular']
-                ]
-            ]
-        ]
+        'address' => 'Silom Road, Bangkok 10500',
+        'type' => '💆 Spa & Wellness'
+    ],
+    'johns-coffee' => [
+        'name' => "John's Coffee House",
+        'description' => 'Specialty coffee and fresh pastries',
+        'address' => 'Thonglor Soi 13, Bangkok 10110',
+        'type' => '☕ Specialty Coffee'
     ]
 ];
 
 // Get business data
-$business = $businesses[$omf_id] ?? $businesses['tonys-pizza'];
+$business = $businesses[$omf_id] ?? [
+    'name' => ucwords(str_replace('-', ' ', $omf_id)),
+    'description' => 'Welcome to our business',
+    'address' => 'Bangkok, Thailand',
+    'type' => '🏪 Business'
+];
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($business['name']); ?> - OMF:ID</title>
+    <title><?php echo htmlspecialchars($business['name']); ?> - OMFID</title>
+    
+    <!-- CRITICAL: Load theme files FIRST -->
+    <link rel="stylesheet" href="/css/variables.css">
+    
+    <!-- Favicon and App Icons -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="apple-touch-icon" href="/assets/logo.jpg">
     
     <!-- Social Media Meta Tags -->
-    <meta property="og:title" content="<?php echo htmlspecialchars($business['name']); ?> - OMF:ID">
+    <meta property="og:title" content="<?php echo htmlspecialchars($business['name']); ?> - OMFID">
     <meta property="og:description" content="<?php echo htmlspecialchars($business['description']); ?>">
-    <meta property="og:image" content="https://omfid.com/assets/preview.jpg">
+    <meta property="og:image" content="/assets/preview-business.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:type" content="image/jpeg">
     <meta property="og:url" content="https://omfid.com/<?php echo htmlspecialchars($omf_id); ?>">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="OMFID">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@omfid">
+    <meta name="twitter:title" content="<?php echo htmlspecialchars($business['name']); ?> - OMFID">
+    <meta name="twitter:description" content="<?php echo htmlspecialchars($business['description']); ?>">
+    <meta name="twitter:image" content="/assets/preview-business.jpg">
+    
+    <!-- Safari Specific -->
+    <meta name="format-detection" content="telephone=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     
     <style>
-        /* CSS Variables */
-        :root {
-            --primary-color: <?php echo $business['color_primary']; ?>;
-            --secondary-color: <?php echo $business['color_secondary']; ?>;
-            --gradient: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
-            --text-white: #ffffff;
-            --text-dark: #1a202c;
-            --text-gray: #4a5568;
-            --text-light-gray: #718096;
-            --bg-white: #ffffff;
-            --bg-light: #f7fafc;
-            --border-light: #e2e8f0;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        /* Dark mode variables */
-        [data-theme="dark"] {
-            --text-white: #f7fafc;
-            --text-dark: #f7fafc;
-            --text-gray: #cbd5e1;
-            --text-light-gray: #94a3b8;
-            --bg-white: #1a202c;
-            --bg-light: #2d3748;
-            --border-light: #4a5568;
-            --shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-            --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.4);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            transition: all 0.3s ease;
-        }
-
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-light);
-            color: var(--text-dark);
-            line-height: 1.6;
-        }
-
-        /* Header */
+        /* Page-specific styles using CSS variables */
         .header {
-            background: var(--bg-white);
-            padding: 20px 0;
-            box-shadow: var(--shadow);
+            background: var(--header-bg);
+            box-shadow: 0 2px 10px var(--shadow-light);
             position: sticky;
             top: 0;
             z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
         }
-
+        
         .header-content {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 15px 20px;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
-
+        
+        /* Logo Styles with Image */
         .logo {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            font-size: 24px;
-            font-weight: 700;
-            color: var(--primary-color);
+            display: flex !important;
+            align-items: center !important;
+            text-decoration: none !important;
+            transition: all 0.3s ease !important;
+            font-size: unset !important;
+            font-weight: unset !important;
+            background: unset !important;
+            -webkit-background-clip: unset !important;
+            -webkit-text-fill-color: unset !important;
+            background-clip: unset !important;
         }
 
-        .logo img {
-            width: 40px;
-            height: 40px;
-            margin-right: 12px;
-            border-radius: 8px;
-            object-fit: contain;
+        .logo:hover {
+            transform: scale(1.05) !important;
         }
 
+        .logo-img {
+            height: 35px !important;
+            width: auto !important;
+            border-radius: 6px !important;
+            transition: all 0.3s ease !important;
+            max-width: none !important;
+            max-height: none !important;
+            object-fit: contain !important;
+        }
+
+        /* Dark mode logo adjustments */
+        [data-theme="dark"] .logo-img {
+            filter: brightness(1.1) contrast(1.1) !important;
+        }
+
+        /* Mobile responsive logo */
+        @media (max-width: 768px) {
+            .logo-img {
+                height: 28px !important;
+            }
+        }
+        
         .header-actions {
             display: flex;
             gap: 15px;
             align-items: center;
         }
 
+        /* Theme Toggle Button */
         .theme-toggle {
-            background: none;
-            border: none;
-            font-size: 24px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            padding: 8px;
-            border-radius: 8px;
             transition: all 0.3s ease;
+            font-size: 18px;
+            color: var(--text-primary);
         }
 
         .theme-toggle:hover {
-            background: var(--bg-light);
+            border-color: var(--accent-color);
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px var(--shadow-medium);
         }
 
-        .btn {
-            padding: 12px 20px;
+        .language-selector {
+            padding: 8px 15px;
+            border: 2px solid var(--border-color);
+            border-radius: 25px;
+            background: var(--card-bg);
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .language-selector:hover {
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        /* Action Button */
+        .action-btn {
+            padding: 8px 16px;
             border-radius: 25px;
             text-decoration: none;
-            font-weight: 600;
+            font-weight: 500;
             transition: all 0.3s ease;
-            border: none;
-            cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
-        .btn-call {
-            background: var(--bg-light);
-            color: var(--text-gray);
-            border: 2px solid var(--border-light);
+        .action-btn.secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
         }
 
-        .btn-call:hover {
+        .action-btn.secondary:hover {
+            border-color: var(--accent-color);
             transform: translateY(-2px);
-            box-shadow: var(--shadow);
+            box-shadow: 0 4px 12px var(--shadow-medium);
         }
-
-        .btn-primary {
+        
+        /* Business Hero Section */
+        .business-hero {
             background: var(--gradient);
-            color: var(--text-white);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        /* Hero Section */
-        .hero {
-            background: var(--gradient);
-            color: var(--text-white);
+            color: white;
             padding: 60px 20px;
             position: relative;
         }
-
-        .hero-content {
+        
+        .business-hero-content {
             max-width: 1200px;
             margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 400px;
-            gap: 60px;
+        }
+        
+        .back-button {
+            color: white;
+            text-decoration: none;
+            display: inline-flex;
             align-items: center;
-        }
-
-        .hero-text h1 {
-            font-size: 48px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            line-height: 1.1;
-        }
-
-        .hero-subtitle {
-            font-size: 18px;
-            opacity: 0.9;
-            margin-bottom: 24px;
-            line-height: 1.5;
-        }
-
-        .business-type {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 6px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            display: inline-block;
+            gap: 5px;
             margin-bottom: 20px;
+            opacity: 0.9;
+            transition: all 0.3s;
         }
-
-        .hero-meta {
+        
+        .back-button:hover {
+            opacity: 1;
+            transform: translateX(-5px);
+        }
+        
+        .business-info h1 {
+            font-size: 48px;
+            margin-bottom: 10px;
+        }
+        
+        .business-meta {
             display: flex;
             gap: 30px;
-            margin-bottom: 32px;
+            font-size: 18px;
+            opacity: 0.9;
+            margin-top: 20px;
             flex-wrap: wrap;
         }
-
+        
         .meta-item {
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 16px;
-            opacity: 0.9;
         }
-
-        .hero-actions {
+        
+        /* Quick Actions */
+        .quick-actions {
             display: flex;
-            gap: 16px;
+            gap: 15px;
+            margin-top: 30px;
             flex-wrap: wrap;
         }
-
-        .hero-btn {
-            padding: 14px 28px;
-            border-radius: 25px;
-            font-weight: 600;
-            text-decoration: none;
-            transition: all 0.3s ease;
+        
+        .action-btn-hero {
+            padding: 12px 24px;
             border: none;
+            border-radius: 30px;
             cursor: pointer;
             font-size: 16px;
-        }
-
-        .hero-btn.primary {
-            background: var(--text-white);
-            color: var(--primary-color);
-        }
-
-        .hero-btn.secondary {
-            background: rgba(255, 255, 255, 0.2);
-            color: var(--text-white);
-            border: 2px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .hero-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        /* Hero Image Placeholder */
-        .hero-image {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px dashed rgba(255, 255, 255, 0.3);
-            border-radius: 12px;
-            aspect-ratio: 4/3;
+            transition: all 0.3s;
             display: flex;
-            flex-direction: column;
             align-items: center;
-            justify-content: center;
-            color: var(--text-white);
-            font-size: 18px;
-            font-weight: 600;
+            gap: 8px;
+            text-decoration: none;
         }
-
-        .hero-image small {
-            margin-top: 8px;
-            opacity: 0.7;
-            font-size: 14px;
+        
+        .action-btn-hero.primary {
+            background: white;
+            color: var(--accent-color);
         }
-
-        /* Main Content */
-        .main-content {
+        
+        .action-btn-hero.secondary {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+        
+        .action-btn-hero:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px var(--shadow-heavy);
+        }
+        
+        /* Menu Container */
+        .container {
             max-width: 1200px;
-            margin: -40px auto 60px;
+            margin: -30px auto 50px;
             padding: 0 20px;
             position: relative;
             z-index: 10;
         }
-
-        /* Menu Section */
+        
+        /* Menu Sections */
         .menu-section {
-            background: var(--bg-white);
+            background: var(--card-bg);
             border-radius: 20px;
-            padding: 40px;
-            box-shadow: var(--shadow);
-            margin-bottom: 40px;
+            padding: 30px;
+            box-shadow: 0 10px 40px var(--shadow-medium);
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
         }
-
+        
         .section-header {
-            text-align: center;
-            margin-bottom: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
         }
-
+        
         .section-title {
-            font-size: 36px;
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 16px;
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--text-primary);
         }
-
-        .section-subtitle {
-            font-size: 18px;
-            color: var(--text-gray);
-            max-width: 600px;
-            margin: 0 auto;
-            line-height: 1.6;
+        
+        .view-toggle {
+            display: flex;
+            gap: 10px;
         }
-
+        
+        .toggle-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--border-color);
+            background: var(--card-bg);
+            color: var(--text-primary);
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .toggle-btn.active {
+            background: var(--gradient);
+            color: white;
+            border-color: transparent;
+        }
+        
+        .toggle-btn:hover:not(.active) {
+            border-color: var(--accent-color);
+        }
+        
         /* Menu Grid */
         .menu-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-            gap: 30px;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
         }
-
+        
         .menu-item {
-            background: var(--bg-light);
-            border-radius: 16px;
-            padding: 24px;
-            transition: all 0.3s ease;
-            border: 1px solid var(--border-light);
+            background: var(--bg-tertiary);
+            border-radius: 15px;
+            padding: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+            border: 1px solid var(--border-color);
         }
-
+        
         .menu-item:hover {
-            transform: translateY(-4px);
-            box-shadow: var(--shadow-hover);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px var(--shadow-medium);
+            border-color: var(--accent-color);
         }
-
+        
         .menu-item-header {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 12px;
-            gap: 16px;
+            align-items: start;
+            margin-bottom: 10px;
         }
-
+        
         .menu-item-name {
             font-size: 20px;
-            font-weight: 600;
-            color: var(--text-dark);
-            line-height: 1.3;
+            font-weight: bold;
+            color: var(--text-primary);
         }
-
+        
         .menu-item-price {
             font-size: 20px;
-            font-weight: 700;
-            color: var(--primary-color);
-            white-space: nowrap;
+            font-weight: bold;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
-
+        
         .menu-item-description {
-            color: var(--text-gray);
+            color: var(--text-secondary);
             font-size: 14px;
             line-height: 1.5;
-            margin-bottom: 16px;
+            margin-bottom: 10px;
         }
-
+        
         .menu-item-tags {
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
         }
-
+        
         .tag {
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 500;
-            border: 1px solid;
-        }
-
-        .tag.vegetarian {
-            background: rgba(72, 187, 120, 0.1);
-            color: #38a169;
-            border-color: rgba(72, 187, 120, 0.3);
-        }
-
-        .tag.popular {
-            background: rgba(237, 137, 54, 0.1);
-            color: #dd6b20;
-            border-color: rgba(237, 137, 54, 0.3);
-        }
-
-        .tag.spicy {
-            background: rgba(245, 101, 101, 0.1);
-            color: #e53e3e;
-            border-color: rgba(245, 101, 101, 0.3);
-        }
-
-        .tag.premium {
-            background: rgba(159, 122, 234, 0.1);
-            color: #805ad5;
-            border-color: rgba(159, 122, 234, 0.3);
-        }
-
-        .tag.signature {
-            background: rgba(56, 178, 172, 0.1);
-            color: #319795;
-            border-color: rgba(56, 178, 172, 0.3);
-        }
-
-        /* Gallery Section */
-        .gallery-section {
-            background: var(--bg-white);
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: var(--shadow);
-            margin-bottom: 40px;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin-top: 30px;
-        }
-
-        .gallery-item {
-            background: var(--bg-light);
-            border: 2px dashed var(--border-light);
+            padding: 4px 10px;
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
-            aspect-ratio: 16/9;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-light-gray);
-            font-size: 14px;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            cursor: pointer;
+            font-size: 12px;
+            color: var(--text-secondary);
         }
-
-        .gallery-item:hover {
-            border-color: var(--primary-color);
-            background: var(--bg-white);
-            transform: translateY(-2px);
+        
+        .tag.spicy {
+            background: rgba(255, 68, 68, 0.1);
+            color: #ff4444;
+            border-color: rgba(255, 68, 68, 0.3);
         }
-
-        .gallery-item.square { aspect-ratio: 1/1; }
-        .gallery-item.portrait { aspect-ratio: 3/4; }
-        .gallery-item.wide { aspect-ratio: 21/9; }
-
-        /* Footer */
-        .footer {
+        
+        .tag.popular {
+            background: rgba(255, 152, 0, 0.1);
+            color: #ff9800;
+            border-color: rgba(255, 152, 0, 0.3);
+        }
+        
+        .tag.veg {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4caf50;
+            border-color: rgba(76, 175, 80, 0.3);
+        }
+        
+        /* CTA Section */
+        .cta-section {
+            background: var(--gradient);
+            color: white;
             text-align: center;
-            padding: 40px 20px;
-            color: var(--text-light-gray);
-            font-size: 14px;
+            padding: 50px 20px;
+            border-radius: 20px;
+            margin-top: 50px;
         }
-
-        .footer a {
-            color: var(--primary-color);
+        
+        .cta-section h2 {
+            font-size: 32px;
+            margin-bottom: 15px;
+        }
+        
+        .cta-section p {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .cta-button {
+            background: white;
+            color: var(--accent-color);
+            padding: 15px 40px;
+            border-radius: 30px;
             text-decoration: none;
+            display: inline-block;
+            font-weight: bold;
+            transition: all 0.3s;
+        }
+        
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 30px var(--shadow-heavy);
         }
 
+        /* Empty State */
+        .empty-state {
+            grid-column: 1/-1;
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--bg-tertiary);
+            border-radius: 15px;
+            border: 2px dashed var(--border-color);
+        }
+
+        .empty-state h3 {
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .empty-state p {
+            color: var(--text-muted);
+        }
+        
         /* Mobile Responsive */
         @media (max-width: 768px) {
-            .header-content {
-                flex-direction: column;
-                gap: 20px;
-            }
-
-            .hero-content {
-                grid-template-columns: 1fr;
-                gap: 40px;
-                text-align: center;
-            }
-
-            .hero-text h1 {
+            .business-info h1 {
                 font-size: 32px;
             }
-
-            .hero-meta {
-                justify-content: center;
-            }
-
+            
             .menu-grid {
                 grid-template-columns: 1fr;
             }
-
-            .section-title {
-                font-size: 28px;
+            
+            .business-meta {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .quick-actions {
+                flex-wrap: wrap;
             }
 
-            .gallery-grid {
-                grid-template-columns: 1fr;
+            .header-actions {
+                gap: 10px;
+            }
+
+            .action-btn {
+                padding: 6px 12px;
+                font-size: 14px;
+            }
+
+            .action-btn-hero {
+                padding: 10px 20px;
+                font-size: 14px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- Header -->
+    <!-- Header with Dark Mode & Settings -->
     <header class="header">
         <div class="header-content">
             <a href="/" class="logo">
-                <img src="/assets/logo.jpg" alt="OMF:ID Logo">
-                OMF:ID
+                <img src="/assets/logo.jpg" alt="OMFID" class="logo-img" loading="eager">
             </a>
             <div class="header-actions">
                 <button class="theme-toggle" id="themeToggle">
                     <span class="theme-icon">🌙</span>
                 </button>
-                <a href="tel:+6621234567" class="btn btn-call">📞 Call</a>
-                <a href="https://make.openmenuformat.com" target="_blank" class="btn btn-primary">+ Create Menu</a>
+                
+                <select class="language-selector" id="languageSelector" onchange="changeLanguage()">
+                    <option value="en">🇬🇧 English</option>
+                    <option value="th">🇹🇭 ไทย</option>
+                    <option value="zh">🇨🇳 中文</option>
+                    <option value="ja">🇯🇵 日本語</option>
+                </select>
+
+                <a href="https://make.openmenuformat.com" target="_blank" class="action-btn secondary">📱 Create Menu</a>
             </div>
         </div>
     </header>
 
-    <!-- Hero Section -->
-    <section class="hero">
-        <div class="hero-content">
-            <div class="hero-text">
-                <div class="business-type"><?php echo $business['type']; ?></div>
+    <!-- Business Hero -->
+    <div class="business-hero">
+        <div class="business-hero-content">
+            <a href="/" class="back-button">← Back to Directory</a>
+            <div class="business-info">
                 <h1><?php echo htmlspecialchars($business['name']); ?></h1>
-                <p class="hero-subtitle"><?php echo htmlspecialchars($business['subtitle']); ?></p>
-                
-                <div class="hero-meta">
+                <p style="font-size: 20px; opacity: 0.9;"><?php echo htmlspecialchars($business['description']); ?></p>
+                <div class="business-meta">
                     <div class="meta-item">📍 <?php echo htmlspecialchars($business['address']); ?></div>
-                    <div class="meta-item">🕐 <?php echo htmlspecialchars($business['hours']); ?></div>
+                    <div class="meta-item">⭐ 4.8 (324 reviews)</div>
+                    <div class="meta-item"><?php echo $business['type']; ?></div>
                 </div>
-                
-                <div class="hero-actions">
-                    <button class="hero-btn primary" onclick="handleCall()">📞 Call Now</button>
-                    <button class="hero-btn secondary" onclick="document.querySelector('.menu-section').scrollIntoView({behavior:'smooth'})">📖 View Menu</button>
-                    <button class="hero-btn secondary" onclick="handleDirections()">📍 Directions</button>
+                <div class="quick-actions">
+                    <button class="action-btn-hero primary" onclick="handleCall()">📞 Call Now</button>
+                    <button class="action-btn-hero secondary" onclick="handleDirections()">🗺️ Get Directions</button>
+                    <button class="action-btn-hero secondary" onclick="handleShare()">📤 Share</button>
                 </div>
-            </div>
-            
-            <div class="hero-image">
-                📸 Hero Image
-                <small>(1200x600px recommended)</small>
             </div>
         </div>
-    </section>
+    </div>
 
-    <!-- Main Content -->
-    <main class="main-content">
+    <!-- Menu Container -->
+    <div class="container">
         <!-- Menu Section -->
-        <section class="menu-section">
+        <div class="menu-section">
             <div class="section-header">
-                <h2 class="section-title"><?php echo htmlspecialchars($business['menu_section']['title']); ?></h2>
-                <p class="section-subtitle"><?php echo htmlspecialchars($business['menu_section']['subtitle']); ?></p>
+                <h2 class="section-title">Menu</h2>
+                <div class="view-toggle">
+                    <button class="toggle-btn active" onclick="switchView('grid')">Grid View</button>
+                    <button class="toggle-btn" onclick="switchView('list')">List View</button>
+                </div>
             </div>
             
-            <div class="menu-grid">
-                <?php foreach ($business['menu_section']['items'] as $item): ?>
+            <div class="menu-grid" id="menuGrid">
+                <?php if ($omf_id == 'tonys-pizza'): ?>
+                    <!-- Pizza Menu Items -->
                     <div class="menu-item">
                         <div class="menu-item-header">
-                            <div class="menu-item-name"><?php echo htmlspecialchars($item['name']); ?></div>
-                            <div class="menu-item-price">฿<?php echo htmlspecialchars($item['price']); ?></div>
+                            <div class="menu-item-name">Margherita Pizza</div>
+                            <div class="menu-item-price">฿350</div>
                         </div>
                         <div class="menu-item-description">
-                            <?php echo htmlspecialchars($item['description']); ?>
+                            Classic Italian pizza with San Marzano tomato sauce, fresh mozzarella, basil, and extra virgin olive oil
                         </div>
                         <div class="menu-item-tags">
-                            <?php foreach ($item['tags'] as $tag): ?>
-                                <span class="tag <?php echo strtolower(str_replace([' ', "'"], ['-', ''], $tag)); ?>">
-                                    <?php echo htmlspecialchars($tag); ?>
-                                </span>
-                            <?php endforeach; ?>
+                            <span class="tag veg">Vegetarian</span>
+                            <span class="tag popular">Popular</span>
                         </div>
                     </div>
-                <?php endforeach; ?>
-            </div>
-        </section>
-
-        <!-- Gallery Section -->
-        <?php if (!empty($business['gallery'])): ?>
-            <section class="gallery-section">
-                <div class="section-header">
-                    <h2 class="section-title">📸 Gallery</h2>
-                </div>
-                <div class="gallery-grid">
-                    <?php foreach ($business['gallery'] as $title => $layout): ?>
-                        <div class="gallery-item <?php echo strtolower($layout); ?>">
-                            📸 <?php echo htmlspecialchars($title); ?>
-                            <small><?php echo $layout; ?></small>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <div class="menu-item-name">Pepperoni Pizza</div>
+                            <div class="menu-item-price">฿420</div>
                         </div>
-                    <?php endforeach; ?>
-                </div>
-            </section>
-        <?php endif; ?>
-    </main>
+                        <div class="menu-item-description">
+                            Loaded with double pepperoni, mozzarella cheese, and our signature tomato sauce
+                        </div>
+                        <div class="menu-item-tags">
+                            <span class="tag spicy">Spicy</span>
+                            <span class="tag popular">Popular</span>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <div class="menu-item-name">Hawaiian Pizza</div>
+                            <div class="menu-item-price">฿380</div>
+                        </div>
+                        <div class="menu-item-description">
+                            Ham, pineapple, mozzarella cheese with tomato sauce base
+                        </div>
+                        <div class="menu-item-tags">
+                            <span class="tag">Sweet & Savory</span>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <div class="menu-item-name">Caesar Salad</div>
+                            <div class="menu-item-price">฿220</div>
+                        </div>
+                        <div class="menu-item-description">
+                            Fresh romaine lettuce, parmesan cheese, croutons, and our house-made Caesar dressing
+                        </div>
+                        <div class="menu-item-tags">
+                            <span class="tag veg">Vegetarian</span>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <div class="menu-item-name">Carbonara Pasta</div>
+                            <div class="menu-item-price">฿280</div>
+                        </div>
+                        <div class="menu-item-description">
+                            Creamy pasta with crispy bacon, egg yolk, parmesan cheese, and black pepper
+                        </div>
+                        <div class="menu-item-tags">
+                            <span class="tag popular">Popular</span>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <div class="menu-item-name">Tiramisu</div>
+                            <div class="menu-item-price">฿180</div>
+                        </div>
+                        <div class="menu-item-description">
+                            Classic Italian dessert with coffee-soaked ladyfingers, mascarpone cream, and cocoa
+                        </div>
+                        <div class="menu-item-tags">
+                            <span class="tag">Dessert</span>
+                            <span class="tag popular">Popular</span>
+                        </div>
+                    </div>
+                    
+                <?php elseif ($omf_id == 'marias-spa'): ?>
+                    <!-- Spa Services -->
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <div class="menu-item-name">Traditional Thai Massage</div>
+                            <div class="menu-item-price">฿600/hr</div>
+                        </div>
+                        <div class="menu-item-description">
+                            Full body traditional Thai massage focusing on pressure points and stretching
+                        </div>
+                        <div class="menu-item-tags">
+                            <span class="tag popular">Popular</span>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <div class="menu-item-name">Aromatherapy Oil Massage</div>
+                            <div class="menu-item-price">฿800/hr</div>
+                        </div>
+                        <div class="menu-item-description">
+                            Relaxing oil massage with your choice of essential oils
+                        </div>
+                        <div class="menu-item-tags">
+                            <span class="tag">Relaxing</span>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <div class="menu-item-name">Foot Reflexology</div>
+                            <div class="menu-item-price">฿400/45min</div>
+                        </div>
+                        <div class="menu-item-description">
+                            Traditional foot massage focusing on reflex points
+                        </div>
+                        <div class="menu-item-tags">
+                            <span class="tag popular">Popular</span>
+                        </div>
+                    </div>
+                    
+                <?php elseif ($omf_id == 'johns-coffee'): ?>
+                    <!-- Coffee Menu -->
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <div class="menu-item-name">Cappuccino</div>
+                            <div class="menu-item-price">฿120</div>
+                        </div>
+                        <div class="menu-item-description">
+                            Double shot espresso with steamed milk and perfect foam art
+                        </div>
+                        <div class="menu-item-tags">
+                            <span class="tag popular">Popular</span>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <div class="menu-item-name">Iced Americano</div>
+                            <div class="menu-item-price">฿100</div>
+                        </div>
+                        <div class="menu-item-description">
+                            Double shot espresso over ice with cold water
+                        </div>
+                        <div class="menu-item-tags">
+                            <span class="tag">Refreshing</span>
+                        </div>
+                    </div>
+                    
+                    <div class="menu-item">
+                        <div class="menu-item-header">
+                            <div class="menu-item-name">Croissant</div>
+                            <div class="menu-item-price">฿90</div>
+                        </div>
+                        <div class="menu-item-description">
+                            Freshly baked buttery French croissant
+                        </div>
+                        <div class="menu-item-tags">
+                            <span class="tag">Fresh Daily</span>
+                        </div>
+                    </div>
+                    
+                <?php else: ?>
+                    <!-- Default for unknown businesses -->
+                    <div class="empty-state">
+                        <h3>Menu Coming Soon!</h3>
+                        <p>This business hasn't uploaded their menu yet.</p>
+                    </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        
+        <!-- CTA Section -->
+        <div class="cta-section">
+            <h2>Is this your business?</h2>
+            <p>Take control of your OMFID profile and keep your menu always up to date</p>
+            <a href="https://make.openmenuformat.com" target="_blank" class="cta-button">Claim This Business - It's Free!</a>
+        </div>
+    </div>
 
-    <!-- Footer -->
-    <footer class="footer">
-        <p>Powered by <a href="https://openmenuformat.com" target="_blank">Open Menu Format</a> • Made with the <strong>Snack House</strong> template</p>
-    </footer>
-
+    <!-- CRITICAL: Load theme script -->
+    <script src="/js/theme.js"></script>
+    
     <script>
-        // Dark Mode - Initialize IMMEDIATELY (not waiting for DOM)
-        (function() {
-            console.log('🌙 Initializing dark mode...');
+        // View Toggle
+        function switchView(viewType) {
+            const buttons = document.querySelectorAll('.toggle-btn');
+            const menuGrid = document.getElementById('menuGrid');
             
-            // Use EXACT same key as homepage
-            const isDarkMode = localStorage.getItem('darkMode') === 'true';
-            console.log('🌙 localStorage darkMode:', localStorage.getItem('darkMode'), 'isDark:', isDarkMode);
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
             
-            // Set theme immediately to prevent flash
-            document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
-            console.log('🌙 Set data-theme to:', isDarkMode ? 'dark' : 'light');
-        })();
-
-        // Setup toggle after DOM loads
-        document.addEventListener('DOMContentLoaded', function() {
-            const themeToggle = document.getElementById('themeToggle');
-            const themeIcon = themeToggle?.querySelector('.theme-icon');
-            
-            if (!themeToggle || !themeIcon) {
-                console.error('🌙 Theme toggle elements not found!');
-                return;
+            if (viewType === 'list') {
+                menuGrid.style.gridTemplateColumns = '1fr';
+            } else {
+                menuGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(350px, 1fr))';
             }
-            
-            // Set initial icon
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            themeIcon.textContent = currentTheme === 'dark' ? '☀️' : '🌙';
-            console.log('🌙 Initial icon set for theme:', currentTheme);
-            
-            // Toggle handler
-            themeToggle.addEventListener('click', function() {
-                const currentTheme = document.documentElement.getAttribute('data-theme');
-                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-                
-                console.log('🌙 Switching from', currentTheme, 'to', newTheme);
-                
-                // Update DOM
-                document.documentElement.setAttribute('data-theme', newTheme);
-                
-                // Update localStorage with EXACT same format as homepage
-                localStorage.setItem('darkMode', newTheme === 'dark' ? 'true' : 'false');
-                
-                // Update icon
-                themeIcon.textContent = newTheme === 'dark' ? '☀️' : '🌙';
-                
-                console.log('🌙 Updated localStorage to:', localStorage.getItem('darkMode'));
-                console.log('🌙 Theme switch complete:', newTheme);
-            });
-            
-            console.log('✅ Dark mode setup complete');
-        });
+        }
 
         // Business Actions
         function handleCall() {
@@ -739,8 +791,26 @@ $business = $businesses[$omf_id] ?? $businesses['tonys-pizza'];
         }
         
         function handleDirections() {
-            const address = encodeURIComponent('<?php echo $business["name"] . " " . $business["address"]; ?>');
-            window.open(`https://maps.google.com/?q=${address}`, '_blank');
+            window.open('https://maps.google.com/?q=<?php echo urlencode($business['name'] . ' ' . $business['address']); ?>', '_blank');
+        }
+        
+        function handleShare() {
+            if (navigator.share) {
+                navigator.share({
+                    title: '<?php echo addslashes($business['name']); ?>',
+                    text: 'Check out <?php echo addslashes($business['name']); ?> on OMFID!',
+                    url: window.location.href
+                });
+            } else {
+                navigator.clipboard.writeText(window.location.href);
+                alert('Link copied to clipboard!');
+            }
+        }
+        
+        function changeLanguage() {
+            const lang = document.getElementById('languageSelector').value;
+            console.log('Language changed to:', lang);
+            // In production, this would translate the content
         }
     </script>
 </body>
