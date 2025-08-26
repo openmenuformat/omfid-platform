@@ -7,33 +7,49 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($business['name']); ?> - OMFID</title>
+    <title><?php echo htmlspecialchars($business['name']); ?> - OMF:ID</title>
     
     <!-- Favicon and Meta Tags -->
     <link rel="icon" type="image/x-icon" href="https://omfid.com/assets/favicon.ico">
-    <meta property="og:title" content="<?php echo htmlspecialchars($business['name']); ?> - OMFID">
+    <meta property="og:title" content="<?php echo htmlspecialchars($business['name']); ?> - OMF:ID">
     <meta property="og:description" content="<?php echo htmlspecialchars($business['description']); ?>">
     <meta property="og:image" content="https://omfid.com/assets/preview-business.jpg">
     <meta property="og:url" content="https://omfid.com/<?php echo htmlspecialchars($omf_id); ?>">
     
-    <!-- Load Template CSS with Custom Colors -->
+    <!-- Load Template CSS FIRST -->
     <link rel="stylesheet" href="/templates/default1/style.css">
     
-    <!-- Inject Custom Colors -->
+    <!-- Dark Mode Initialization Script - MUST RUN BEFORE CSS -->
+    <script>
+        // Initialize dark mode IMMEDIATELY to prevent flash
+        (function() {
+            const isDarkMode = localStorage.getItem('darkMode') === 'true';
+            document.documentElement.setAttribute('data-theme', isDarkMode ? 'dark' : 'light');
+        })();
+    </script>
+    
+    <!-- Custom Colors with Dark Mode Support -->
     <style>
         :root {
             --primary-color: <?php echo $business['color_primary'] ?? '#667eea'; ?>;
             --secondary-color: <?php echo $business['color_secondary'] ?? '#764ba2'; ?>;
             --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
         }
+        
+        /* Dark mode custom colors - IMPORTANT: This overrides the defaults */
+        [data-theme="dark"] {
+            --primary-color: <?php echo $business['color_primary'] ?? '#6366f1'; ?>;
+            --secondary-color: <?php echo $business['color_secondary'] ?? '#8b5cf6'; ?>;
+            --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        }
     </style>
 </head>
 <body>
-    <!-- OMFID Header -->
+    <!-- OMF:ID Header -->
     <header class="omfid-header">
         <nav class="omfid-nav">
             <a href="/" class="omfid-logo">
-                <img src="/assets/logo.jpg" alt="OMFID" class="omfid-logo-img">
+                <img src="/assets/logo.jpg" alt="OMF:ID" class="omfid-logo-img">
             </a>
             <div class="omfid-actions">
                 <button class="omfid-btn secondary theme-toggle" id="themeToggle">
@@ -52,19 +68,16 @@
                 <div class="business-type"><?php echo $business['type']; ?></div>
                 <h1><?php echo htmlspecialchars($business['name']); ?></h1>
                 <p class="description"><?php echo htmlspecialchars($business['description']); ?></p>
-                
                 <div class="hero-meta">
                     <div class="meta-item">📍 <?php echo htmlspecialchars($business['address']); ?></div>
                     <div class="meta-item">🕐 <?php echo htmlspecialchars($business['hours'] ?? 'Check hours'); ?></div>
                 </div>
-                
                 <div class="hero-actions">
                     <a href="tel:<?php echo $business['phone']; ?>" class="hero-btn primary">📞 Call Now</a>
                     <a href="#menu" class="hero-btn secondary">📖 View Menu</a>
                     <a href="#" class="hero-btn secondary" onclick="getDirections()">📍 Directions</a>
                 </div>
             </div>
-            
             <div class="hero-visual">
                 <div class="hero-image-placeholder" data-upload-zone="hero">
                     📸 Hero Image<br>
@@ -85,60 +98,60 @@
             
             <div class="menu-grid">
                 <?php foreach ($business['menu_section']['items'] as $item): ?>
-                    <div class="menu-item">
-                        <div class="menu-item-header">
-                            <div class="menu-item-name"><?php echo htmlspecialchars($item['name']); ?></div>
-                            <div class="menu-item-price">฿<?php echo htmlspecialchars($item['price']); ?></div>
-                        </div>
-                        <div class="menu-item-description">
-                            <?php echo htmlspecialchars($item['description']); ?>
-                        </div>
-                        <div class="menu-item-tags">
-                            <?php foreach ($item['tags'] as $tag): ?>
-                                <?php 
-                                $tagClass = '';
-                                if (in_array(strtolower($tag), ['popular', 'bestseller'])) $tagClass = 'popular';
-                                elseif (in_array(strtolower($tag), ['vegetarian', 'vegan', 'veg'])) $tagClass = 'veg';  
-                                elseif (in_array(strtolower($tag), ['spicy', 'hot'])) $tagClass = 'spicy';
-                                ?>
-                                <span class="tag <?php echo $tagClass; ?>"><?php echo htmlspecialchars($tag); ?></span>
-                            <?php endforeach; ?>
-                        </div>
+                <div class="menu-item">
+                    <div class="menu-item-header">
+                        <div class="menu-item-name"><?php echo htmlspecialchars($item['name']); ?></div>
+                        <div class="menu-item-price">฿<?php echo htmlspecialchars($item['price']); ?></div>
                     </div>
+                    <div class="menu-item-description">
+                        <?php echo htmlspecialchars($item['description']); ?>
+                    </div>
+                    <div class="menu-item-tags">
+                        <?php foreach ($item['tags'] as $tag): ?>
+                        <?php
+                        $tagClass = '';
+                        if (in_array(strtolower($tag), ['popular', 'bestseller'])) $tagClass = 'popular';
+                        elseif (in_array(strtolower($tag), ['vegetarian', 'vegan', 'veg'])) $tagClass = 'veg';
+                        elseif (in_array(strtolower($tag), ['spicy', 'hot'])) $tagClass = 'spicy';
+                        ?>
+                        <span class="tag <?php echo $tagClass; ?>"><?php echo htmlspecialchars($tag); ?></span>
+                        <?php endforeach; ?>
+                    </div>
+                </div>
                 <?php endforeach; ?>
             </div>
         </section>
 
-        <!-- Gallery Flow - Super Sleek -->
+        <!-- Gallery Flow -->
         <section class="gallery-flow">
             <div class="gallery-grid">
-                <?php 
+                <?php
                 $galleryItems = $business['gallery'] ?? [];
                 $index = 1;
-                foreach ($galleryItems as $title => $orientation): 
+                foreach ($galleryItems as $title => $orientation):
                 ?>
-                    <div class="gallery-item" data-upload-zone="gallery-<?php echo $index; ?>">
-                        📸 <?php echo htmlspecialchars($title); ?><br>
-                        <small style="opacity: 0.7; margin-top: 5px;"><?php echo htmlspecialchars($orientation); ?></small>
-                    </div>
-                <?php 
+                <div class="gallery-item" data-upload-zone="gallery-<?php echo $index; ?>">
+                    📸 <?php echo htmlspecialchars($title); ?><br>
+                    <small style="opacity: 0.7; margin-top: 5px;"><?php echo htmlspecialchars($orientation); ?></small>
+                </div>
+                <?php
                 $index++;
-                endforeach; 
+                endforeach;
                 ?>
             </div>
         </section>
     </main>
 
-    <!-- Minimal Footer -->
+    <!-- Footer -->
     <footer class="footer">
-        <p>Powered by <a href="https://openmenuformat.com" target="_blank">Open Menu Format</a> • 
-        Made with the <strong>Default1</strong> template</p>
+        <p>Powered by <a href="https://openmenuformat.com" target="_blank">Open Menu Format</a> •
+         Made with the <strong>Default1</strong> template</p>
     </footer>
 
     <!-- Load Template JavaScript -->
     <script src="/templates/default1/script.js"></script>
     
-    <!-- Template-specific data for JavaScript -->
+    <!-- Business Data for JavaScript -->
     <script>
         window.businessData = {
             name: <?php echo json_encode($business['name']); ?>,
