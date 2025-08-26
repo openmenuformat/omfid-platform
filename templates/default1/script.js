@@ -4,7 +4,12 @@
 function initializeDarkMode() {
     // Load saved theme - SAME KEY AS HOMEPAGE
     const isDark = localStorage.getItem('darkMode') === 'true';
+    console.log('🌙 Initializing dark mode - isDark:', isDark, 'localStorage value:', localStorage.getItem('darkMode'));
+    
+    // FORCE set the data-theme attribute
     document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+    console.log('🌙 Set data-theme to:', document.documentElement.getAttribute('data-theme'));
+    
     updateThemeIcon(isDark ? 'dark' : 'light');
 }
 
@@ -12,6 +17,9 @@ function updateThemeIcon(theme) {
     const themeIcon = document.querySelector('.theme-icon');
     if (themeIcon) {
         themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+        console.log('🌙 Updated icon to:', themeIcon.textContent);
+    } else {
+        console.log('🌙 Theme icon not found');
     }
 }
 
@@ -20,14 +28,18 @@ function getDirections() {
     if (window.businessData && window.businessData.address) {
         const address = encodeURIComponent(window.businessData.name + ' ' + window.businessData.address);
         window.open(`https://maps.google.com/?q=${address}`, '_blank');
+    } else {
+        showToast('Address not available');
     }
 }
 
 function shareBusiness() {
-    if (navigator.share && window.businessData) {
+    const businessName = window.businessData ? window.businessData.name : 'this business';
+    
+    if (navigator.share) {
         navigator.share({
-            title: window.businessData.name,
-            text: `Check out ${window.businessData.name} on OMFID!`,
+            title: businessName,
+            text: `Check out ${businessName} on OMF:ID!`,
             url: window.location.href
         });
     } else {
@@ -36,8 +48,13 @@ function shareBusiness() {
     }
 }
 
+function changeLanguage() {
+    const lang = document.getElementById('languageSelector').value;
+    console.log('Language changed to:', lang);
+    showToast(`Language switched to ${lang}`);
+}
+
 function showImageUploadModal(zoneType) {
-    // This will be implemented when we add the image upload system
     alert(`Image upload for ${zoneType} - Coming soon!\n\nThis will open an upload modal with size guidance.`);
 }
 
@@ -68,20 +85,29 @@ function showToast(message) {
 // DOM Content Loaded - Main initialization
 document.addEventListener('DOMContentLoaded', function() {
     
+    console.log('🌙 DOM loaded, initializing...');
+    
     // Initialize dark mode - SAME KEY AS HOMEPAGE
     initializeDarkMode();
     
     // Dark mode toggle - EXACTLY SAME AS HOMEPAGE
     const themeToggle = document.getElementById('themeToggle');
     if (themeToggle) {
+        console.log('🌙 Theme toggle found, adding listener');
         themeToggle.addEventListener('click', () => {
             const currentTheme = document.documentElement.getAttribute('data-theme');
             const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
             
+            console.log('🌙 Toggle clicked - current:', currentTheme, 'new:', newTheme);
+            
             document.documentElement.setAttribute('data-theme', newTheme);
             localStorage.setItem('darkMode', newTheme === 'dark');
             updateThemeIcon(newTheme);
+            
+            console.log('🌙 Theme updated - localStorage:', localStorage.getItem('darkMode'));
         });
+    } else {
+        console.log('🌙 Theme toggle NOT found!');
     }
     
     // Smooth scrolling for menu link
@@ -174,6 +200,8 @@ document.addEventListener('DOMContentLoaded', function() {
             showImageUploadModal(zoneType);
         });
     });
+    
+    console.log('🌙 All initialization complete');
 });
 
 // Add toast animations to document
