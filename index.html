@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OMFID - Discover Menus Near You</title>
     
-    <!-- CRITICAL: Load theme files FIRST -->
+    <!-- Load universal theme system FIRST -->
     <link rel="stylesheet" href="/css/variables.css">
     
     <!-- Favicon and App Icons -->
@@ -16,17 +16,27 @@
     <meta property="og:title" content="OMFID - Discover Menus Near You">
     <meta property="og:description" content="Browse restaurants, cafes, spas, and more. Updated menus, real prices, instant access.">
     <meta property="og:image" content="/assets/preview-business.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
     <meta property="og:url" content="https://omfid.com">
     <meta name="twitter:card" content="summary">
+    <meta name="twitter:image" content="/assets/preview-business.jpg">
     
+    <!-- Safari Mobile Specific -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="format-detection" content="telephone=no">
+
     <style>
-        /* Page-specific styles using CSS variables */
+        /* Homepage-specific styles using CSS variables */
         .header {
             background: var(--header-bg);
             box-shadow: 0 2px 10px var(--shadow-light);
             position: sticky;
             top: 0;
             z-index: 100;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
         }
 
         .header-content {
@@ -38,6 +48,7 @@
             gap: 1rem;
         }
 
+        /* Logo Styles - Same as business pages */
         .logo {
             text-decoration: none;
             flex-shrink: 0;
@@ -46,9 +57,34 @@
         .logo-img {
             width: 40px !important;
             height: 40px !important;
+            max-width: 40px !important;
+            max-height: 40px !important;
+            min-width: 40px !important;
+            min-height: 40px !important;
             object-fit: contain;
             border-radius: 8px;
             display: block;
+            transition: all var(--transition);
+        }
+
+        .logo:hover .logo-img {
+            transform: scale(1.05);
+        }
+
+        /* Dark mode logo adjustments */
+        [data-theme="dark"] .logo-img {
+            filter: brightness(1.1) contrast(1.1);
+        }
+
+        @media (max-width: 768px) {
+            .logo-img {
+                width: 32px !important;
+                height: 32px !important;
+                max-width: 32px !important;
+                max-height: 32px !important;
+                min-width: 32px !important;
+                min-height: 32px !important;
+            }
         }
 
         .search-bar {
@@ -64,23 +100,28 @@
             border-radius: 12px 0 0 12px;
             font-size: 16px;
             outline: none;
-            transition: border-color 0.2s;
+            transition: border-color var(--transition);
             background: var(--card-bg);
             color: var(--text-primary);
         }
 
         .search-input:focus {
-            border-color: var(--accent-color);
+            border-color: var(--primary-color);
         }
 
         .search-btn {
             padding: 12px 16px;
-            background: var(--accent-color);
+            background: var(--primary-color);
             color: white;
             border: none;
             border-radius: 0 12px 12px 0;
             cursor: pointer;
             font-size: 16px;
+            transition: all var(--transition);
+        }
+
+        .search-btn:hover {
+            background: var(--secondary-color);
         }
 
         .header-actions {
@@ -92,16 +133,20 @@
         .theme-toggle {
             background: var(--bg-tertiary);
             border: 2px solid var(--border-color);
-            font-size: 20px;
+            border-radius: 50%;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            padding: 8px;
-            border-radius: 8px;
             transition: all var(--transition);
+            font-size: 18px;
             color: var(--text-primary);
         }
 
         .theme-toggle:hover {
-            border-color: var(--accent-color);
+            border-color: var(--primary-color);
             transform: scale(1.05);
         }
 
@@ -112,22 +157,28 @@
             font-weight: 500;
             transition: all var(--transition);
             white-space: nowrap;
+            border: 2px solid transparent;
         }
 
         .btn-primary {
-            background: var(--accent-color);
+            background: var(--primary-color);
             color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary-color);
+            transform: translateY(-2px);
         }
 
         .btn-secondary {
             background: var(--bg-tertiary);
-            color: var(--text-secondary);
-            border: 2px solid var(--border-color);
+            color: var(--text-primary);
+            border-color: var(--border-color);
         }
 
-        .btn:hover {
+        .btn-secondary:hover {
+            border-color: var(--primary-color);
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px var(--shadow-medium);
         }
 
         .hero {
@@ -158,6 +209,12 @@
             font-size: 16px;
             cursor: pointer;
             backdrop-filter: blur(10px);
+            transition: all var(--transition);
+        }
+
+        .location-picker:hover {
+            background: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.5);
         }
 
         .categories {
@@ -177,7 +234,7 @@
 
         .category-pill {
             background: var(--bg-tertiary);
-            border: none;
+            border: 2px solid var(--border-color);
             padding: 10px 16px;
             border-radius: 20px;
             white-space: nowrap;
@@ -187,8 +244,14 @@
         }
 
         .category-pill.active {
-            background: var(--accent-color);
+            background: var(--primary-color);
             color: white;
+            border-color: var(--primary-color);
+        }
+
+        .category-pill:hover:not(.active) {
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
         }
 
         .main-content {
@@ -211,9 +274,14 @@
         }
 
         .see-all {
-            color: var(--accent-color);
+            color: var(--primary-color);
             text-decoration: none;
             font-weight: 500;
+            transition: all var(--transition);
+        }
+
+        .see-all:hover {
+            color: var(--secondary-color);
         }
 
         .featured-carousel {
@@ -234,6 +302,7 @@
 
         .featured-card:hover {
             transform: translateY(-4px);
+            color: white;
         }
 
         .featured-tag {
@@ -242,11 +311,22 @@
             border-radius: 20px;
             font-size: 0.8rem;
             font-weight: 600;
+            display: inline-block;
+            margin-bottom: 1rem;
         }
 
         .featured-title {
             font-size: 1.5rem;
-            margin: 1rem 0 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .featured-desc {
+            opacity: 0.9;
+            margin-bottom: 1rem;
+        }
+
+        .featured-cta {
+            font-weight: 600;
         }
 
         .stats-bar {
@@ -254,7 +334,8 @@
             border-radius: 16px;
             padding: 2rem;
             margin: 3rem 0;
-            box-shadow: 0 4px 20px var(--shadow-medium);
+            box-shadow: var(--shadow-medium);
+            border: 1px solid var(--border-color);
         }
 
         .stats-container {
@@ -267,7 +348,7 @@
         .stat-number {
             font-size: 2rem;
             font-weight: 700;
-            color: var(--accent-color);
+            color: var(--primary-color);
         }
 
         .stat-label {
@@ -287,12 +368,14 @@
             overflow: hidden;
             text-decoration: none;
             color: inherit;
-            box-shadow: 0 4px 20px var(--shadow-medium);
+            box-shadow: var(--shadow-medium);
             transition: transform var(--transition);
+            border: 1px solid var(--border-color);
         }
 
         .business-card:hover {
             transform: translateY(-4px);
+            color: inherit;
         }
 
         .business-image {
@@ -302,6 +385,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            color: var(--text-muted);
         }
 
         .business-badge {
@@ -354,10 +438,11 @@
         }
 
         .footer {
-            background: #1e293b;
-            color: white;
+            background: var(--bg-primary);
+            color: var(--text-secondary);
             padding: 3rem 1rem 1rem;
             margin-top: 4rem;
+            border-top: 1px solid var(--border-color);
         }
 
         .footer-content {
@@ -370,22 +455,31 @@
 
         .footer-section h3 {
             margin-bottom: 1rem;
-            color: #f8fafc;
+            color: var(--text-primary);
         }
 
         .footer-section a {
-            color: #94a3b8;
+            color: var(--text-secondary);
             text-decoration: none;
             display: block;
             margin-bottom: 0.5rem;
+            transition: all var(--transition);
+        }
+
+        .footer-section a:hover {
+            color: var(--primary-color);
         }
 
         .footer-bottom {
             text-align: center;
             padding-top: 2rem;
             margin-top: 2rem;
-            border-top: 1px solid #334155;
-            color: #94a3b8;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .footer-bottom a {
+            color: var(--primary-color);
         }
 
         /* Mobile Responsiveness */
@@ -492,7 +586,7 @@
                 <h2 class="section-title">✨ Featured This Week</h2>
             </div>
             <div class="featured-carousel">
-                <a href="tonys-pizza" class="featured-card">
+                <a href="/tonys-pizza" class="featured-card">
                     <div class="featured-content">
                         <span class="featured-tag">SPECIAL OFFER</span>
                         <h3 class="featured-title">Tony's Pizza</h3>
@@ -500,7 +594,7 @@
                         <span class="featured-cta">View Menu →</span>
                     </div>
                 </a>
-                <a href="marias-spa" class="featured-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <a href="/marias-spa" class="featured-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
                     <div class="featured-content">
                         <span class="featured-tag">NEW OPENING</span>
                         <h3 class="featured-title">Maria's Spa</h3>
@@ -540,9 +634,10 @@
                 <a href="#trending" class="see-all">See all →</a>
             </div>
             <div class="business-grid">
-                <a href="tonys-pizza" class="business-card">
+                <a href="/tonys-pizza" class="business-card">
                     <div class="business-image">
                         <span class="business-badge">OPEN NOW</span>
+                        📸 Business Image
                     </div>
                     <div class="business-content">
                         <h3 class="business-name">Tony's Pizza Bangkok</h3>
@@ -556,9 +651,10 @@
                         </div>
                     </div>
                 </a>
-                <a href="johns-coffee" class="business-card">
+                <a href="/johns-coffee" class="business-card">
                     <div class="business-image">
                         <span class="business-badge">OPEN NOW</span>
+                        📸 Business Image
                     </div>
                     <div class="business-content">
                         <h3 class="business-name">John's Coffee House</h3>
@@ -572,9 +668,10 @@
                         </div>
                     </div>
                 </a>
-                <a href="marias-spa" class="business-card">
+                <a href="/marias-spa" class="business-card">
                     <div class="business-image">
                         <span class="business-badge new">NEW</span>
+                        📸 Business Image
                     </div>
                     <div class="business-content">
                         <h3 class="business-name">Maria's Thai Massage & Spa</h3>
@@ -615,15 +712,16 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>© 2025 OMFID - Part of the <a href="https://openmenuformat.com" target="_blank" style="color: inherit; text-decoration: underline;">Open Menu Format</a> ecosystem</p>
+            <p>© 2025 OMFID - Part of the <a href="https://openmenuformat.com" target="_blank">Open Menu Format</a> ecosystem</p>
             <p>Made with ❤️ in Burbank and Bangkok</p>
         </div>
     </footer>
 
-    <!-- CRITICAL: Load theme script LAST -->
+    <!-- Load universal theme manager -->
     <script src="/js/theme.js"></script>
     
     <script>
+        // Search functionality
         function handleSearch() {
             const query = document.getElementById('searchInput').value;
             if (query) {
@@ -631,22 +729,37 @@
             }
         }
 
+        // Category filtering
         function filterCategory(category) {
             document.querySelectorAll('.category-pill').forEach(pill => {
                 pill.classList.remove('active');
             });
             event.target.classList.add('active');
             console.log('Filtering by:', category);
+            // In production, this would filter the displayed businesses
         }
 
+        // Location picker
         function pickLocation() {
             alert('Location picker coming soon!\n(This would open a location selection modal)');
         }
 
+        // Enter key search
         document.getElementById('searchInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
                 handleSearch();
             }
+        });
+
+        // Smooth scroll for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
         });
     </script>
 </body>

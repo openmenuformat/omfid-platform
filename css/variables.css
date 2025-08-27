@@ -1,14 +1,14 @@
-/* Master variables for all OMFID pages - css/variables.css */
+/* Universal CSS Variables for OMFID Platform */
+/* Used by both homepage (index.html) and business pages (view.php) */
+
 :root {
-    /* Brand colors */
-    --primary: #667eea;
-    --secondary: #764ba2;
-    --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+    /* Brand Colors */
     --primary-color: #667eea;
     --secondary-color: #764ba2;
     --accent-color: #667eea;
+    --gradient: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
     
-    /* Light theme (default) */
+    /* Light Mode Theme */
     --bg-primary: #ffffff;
     --bg-secondary: #f8fafc;
     --bg-tertiary: #f1f5f9;
@@ -17,7 +17,7 @@
     --text-muted: #94a3b8;
     --border-color: #e2e8f0;
     --card-bg: #ffffff;
-    --header-bg: #ffffff;
+    --header-bg: rgba(255, 255, 255, 0.95);
     
     /* Shadows */
     --shadow-light: rgba(0, 0, 0, 0.05);
@@ -26,13 +26,13 @@
     --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
     
     /* Transitions */
-    --transition: 0.3s ease;
     --transition-fast: 0.15s ease;
+    --transition: 0.3s ease;
     --transition-slow: 0.5s ease;
 }
 
+/* Dark Mode Theme */
 [data-theme="dark"] {
-    /* Dark theme overrides */
     --bg-primary: #0f172a;
     --bg-secondary: #1e293b;
     --bg-tertiary: #334155;
@@ -41,29 +41,192 @@
     --text-muted: #94a3b8;
     --border-color: #334155;
     --card-bg: #1e293b;
-    --header-bg: #1e293b;
+    --header-bg: rgba(30, 41, 59, 0.95);
     
-    /* Adjusted brand colors for dark mode */
-    --primary-color: #6366f1;
-    --secondary-color: #8b5cf6;
-    --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-    --accent-color: #6366f1;
-    
-    /* Dark shadows */
+    /* Adjusted shadows for dark mode */
     --shadow-light: rgba(0, 0, 0, 0.3);
     --shadow-medium: rgba(0, 0, 0, 0.4);
     --shadow-heavy: rgba(0, 0, 0, 0.6);
-    --shadow-xl: 0 25px 50px rgba(0, 0, 0, 0.6);
+    --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.4);
+    
+    /* Slightly adjust brand colors for better dark mode contrast */
+    --primary-color: #6366f1;
+    --secondary-color: #8b5cf6;
+    --accent-color: #6366f1;
+    --gradient: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
 }
 
-/* Base transitions for all elements */
+/* Global Styles */
 * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
     transition: background-color var(--transition), color var(--transition), border-color var(--transition);
 }
 
-/* Body base styles */
 body {
-    background-color: var(--bg-secondary);
-    color: var(--text-primary);
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    transition: all var(--transition);
+    min-height: 100vh;
+}
+
+/* Common Button Styles */
+.btn, button {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transition: all var(--transition);
+}
+
+.btn:disabled, button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* Common Link Styles */
+a {
+    color: var(--primary-color);
+    transition: all var(--transition);
+}
+
+a:hover {
+    color: var(--secondary-color);
+}
+
+/* Common Input Styles */
+input, select, textarea {
+    font-family: inherit;
+    background: var(--card-bg);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    transition: all var(--transition);
+}
+
+input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Common Card Styles */
+.card {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 20px;
+    transition: all var(--transition);
+}
+
+.card:hover {
+    box-shadow: var(--shadow-medium);
+}
+
+/* Utility Classes */
+.text-primary { color: var(--text-primary); }
+.text-secondary { color: var(--text-secondary); }
+.text-muted { color: var(--text-muted); }
+
+.bg-primary { background: var(--bg-primary); }
+.bg-secondary { background: var(--bg-secondary); }
+.bg-tertiary { background: var(--bg-tertiary); }
+
+.border { border: 1px solid var(--border-color); }
+.border-primary { border-color: var(--primary-color); }
+
+.shadow-light { box-shadow: var(--shadow-light); }
+.shadow-medium { box-shadow: var(--shadow-medium); }
+.shadow-heavy { box-shadow: var(--shadow-heavy); }
+
+.gradient { background: var(--gradient); }
+.gradient-text { 
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Smooth theme transitions */
+html {
+    transition: color-scheme var(--transition);
+}
+
+[data-theme="light"] {
+    color-scheme: light;
+}
+
+[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+/* Force proper scrollbar colors */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-tertiary);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--border-color);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--text-muted);
+}
+
+/* Selection colors */
+::selection {
+    background: var(--primary-color);
+    color: white;
+}
+
+::-moz-selection {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Focus outline for accessibility */
+:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
+}
+
+/* Print styles */
+@media print {
+    [data-theme="dark"] {
+        --bg-primary: #ffffff;
+        --bg-secondary: #ffffff;
+        --bg-tertiary: #f8fafc;
+        --text-primary: #000000;
+        --text-secondary: #333333;
+        --text-muted: #666666;
+        --card-bg: #ffffff;
+        --border-color: #cccccc;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    :root {
+        --border-color: #000000;
+    }
+    
+    [data-theme="dark"] {
+        --border-color: #ffffff;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    * {
+        transition: none !important;
+        animation: none !important;
+    }
 }

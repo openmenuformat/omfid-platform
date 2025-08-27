@@ -2,51 +2,106 @@
 // Get business ID from URL
 $omf_id = $_GET['id'] ?? 'unknown';
 
-// Validation
-$validBusinesses = ['tonys-pizza', 'marias-spa', 'johns-coffee'];
+// Supabase configuration
+$SUPABASE_URL = "https://your-project.supabase.co"; // UPDATE THIS
+$SUPABASE_ANON_KEY = "your-anon-key-here"; // UPDATE THIS
 
-if (!in_array($omf_id, $validBusinesses)) {
+// Function to make Supabase API calls
+function supabaseQuery($table, $select = '*', $filters = []) {
+    global $SUPABASE_URL, $SUPABASE_ANON_KEY;
+    
+    $url = "$SUPABASE_URL/rest/v1/$table?select=" . urlencode($select);
+    
+    // Add filters
+    foreach ($filters as $key => $value) {
+        $url .= "&$key=" . urlencode($value);
+    }
+    
+    $headers = [
+        "apikey: $SUPABASE_ANON_KEY",
+        "Authorization: Bearer $SUPABASE_ANON_KEY",
+        "Content-Type: application/json"
+    ];
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode !== 200) {
+        return null;
+    }
+    
+    return json_decode($response, true);
+}
+
+// Get business data from Supabase
+$businessData = supabaseQuery(
+    'business',
+    'id_business,name_business,description_business,address_business,business_type,phone_business,email_business,hero_image_url,gallery_images',
+    [
+        'omf_id' => "eq.$omf_id",
+        'omfid_published' => 'eq.true'
+    ]
+);
+
+// Check if business exists and is published
+if (!$businessData || empty($businessData)) {
     http_response_code(404);
-    echo "Business not found";
+    ?>
+    <!DOCTYPE html>
+    <html>
+    <head><title>Business Not Found - OMFID</title></head>
+    <body style="font-family: system-ui; text-align: center; padding: 100px;">
+        <h1>Business Not Found</h1>
+        <p>This business is not available on OMFID.</p>
+        <a href="/" style="color: #667eea;">← Back to Directory</a>
+    </body>
+    </html>
+    <?php
     exit;
 }
 
-// Test data for businesses
-$businesses = [
-    'tonys-pizza' => [
-        'name' => "Tony's Pizza Bangkok",
-        'description' => 'Authentic Italian pizza and pasta in the heart of Bangkok',
-        'address' => 'Sukhumvit Soi 24, Bangkok 10110',
-        'type' => '🍕 Italian Restaurant'
-    ],
-    'marias-spa' => [
-        'name' => "Maria's Thai Massage & Spa",
-        'description' => 'Traditional Thai massage and relaxation spa',
-        'address' => 'Silom Road, Bangkok 10500',
-        'type' => '💆 Spa & Wellness'
-    ],
-    'johns-coffee' => [
-        'name' => "John's Coffee House",
-        'description' => 'Specialty coffee and fresh pastries',
-        'address' => 'Thonglor Soi 13, Bangkok 10110',
-        'type' => '☕ Specialty Coffee'
+$business = $businessData[0];
+
+// Get featured section and products
+$sectionData = supabaseQuery(
+    'sections',
+    'id,name,products(id_product,name_product,description_product,price_product,image_url_product)',
+    [
+        'business_id_section' => "eq.{$business['id_business']}",
+        'featured_on_omfid' => 'eq.true',
+        'limit' => '1'
     ]
+);
+
+$featuredSection = $sectionData[0] ?? null;
+$menuItems = $featuredSection['products'] ?? [];
+
+// Parse gallery images
+$galleryImages = json_decode($business['gallery_images'] ?? '[]', true);
+
+// Default gallery placeholders if no images uploaded
+$defaultGallery = [
+    ['label' => 'Fresh Ingredients', 'size' => 'large'],
+    ['label' => 'Interior View', 'size' => 'medium'], 
+    ['label' => 'Signature Dish', 'size' => 'small'],
+    ['label' => 'Kitchen Action', 'size' => 'medium'],
+    ['label' => 'Team Photo', 'size' => 'small'],
+    ['label' => 'Happy Customers', 'size' => 'large']
 ];
 
-// Get business data
-$business = $businesses[$omf_id] ?? [
-    'name' => ucwords(str_replace('-', ' ', $omf_id)),
-    'description' => 'Welcome to our business',
-    'address' => 'Bangkok, Thailand',
-    'type' => '🏪 Business'
-];
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo htmlspecialchars($business['name']); ?> - OMFID</title>
+    <title><?php echo htmlspecialchars($business['name_business']); ?> - OMFID</title>
     
     <!-- CRITICAL: Load theme files FIRST -->
     <link rel="stylesheet" href="/css/variables.css">
@@ -56,27 +111,11 @@ $business = $businesses[$omf_id] ?? [
     <link rel="apple-touch-icon" href="/assets/logo.jpg">
     
     <!-- Social Media Meta Tags -->
-    <meta property="og:title" content="<?php echo htmlspecialchars($business['name']); ?> - OMFID">
-    <meta property="og:description" content="<?php echo htmlspecialchars($business['description']); ?>">
-    <meta property="og:image" content="/assets/preview-business.jpg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:image:type" content="image/jpeg">
+    <meta property="og:title" content="<?php echo htmlspecialchars($business['name_business']); ?> - OMFID">
+    <meta property="og:description" content="<?php echo htmlspecialchars($business['description_business']); ?>">
+    <meta property="og:image" content="<?php echo $business['hero_image_url'] ?: '/assets/preview-business.jpg'; ?>">
     <meta property="og:url" content="https://omfid.com/<?php echo htmlspecialchars($omf_id); ?>">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="OMFID">
-    
-    <!-- Twitter Card -->
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:site" content="@omfid">
-    <meta name="twitter:title" content="<?php echo htmlspecialchars($business['name']); ?> - OMFID">
-    <meta name="twitter:description" content="<?php echo htmlspecialchars($business['description']); ?>">
-    <meta name="twitter:image" content="/assets/preview-business.jpg">
-    
-    <!-- Safari Specific -->
-    <meta name="format-detection" content="telephone=no">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     
     <style>
         /* Page-specific styles using CSS variables */
@@ -99,18 +138,12 @@ $business = $businesses[$omf_id] ?? [
             align-items: center;
         }
         
-        /* Logo Styles with Image */
+        /* Logo Styles */
         .logo {
             display: flex !important;
             align-items: center !important;
             text-decoration: none !important;
             transition: all 0.3s ease !important;
-            font-size: unset !important;
-            font-weight: unset !important;
-            background: unset !important;
-            -webkit-background-clip: unset !important;
-            -webkit-text-fill-color: unset !important;
-            background-clip: unset !important;
         }
 
         .logo:hover {
@@ -122,17 +155,13 @@ $business = $businesses[$omf_id] ?? [
             width: auto !important;
             border-radius: 6px !important;
             transition: all 0.3s ease !important;
-            max-width: none !important;
-            max-height: none !important;
             object-fit: contain !important;
         }
 
-        /* Dark mode logo adjustments */
         [data-theme="dark"] .logo-img {
             filter: brightness(1.1) contrast(1.1) !important;
         }
 
-        /* Mobile responsive logo */
         @media (max-width: 768px) {
             .logo-img {
                 height: 28px !important;
@@ -217,6 +246,10 @@ $business = $businesses[$omf_id] ?? [
         .business-hero-content {
             max-width: 1200px;
             margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
         }
         
         .back-button {
@@ -234,18 +267,35 @@ $business = $businesses[$omf_id] ?? [
             opacity: 1;
             transform: translateX(-5px);
         }
+
+        .business-type {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
         
         .business-info h1 {
             font-size: 48px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
+            font-weight: 900;
+            line-height: 1.1;
+        }
+
+        .business-description {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 20px;
+            line-height: 1.6;
         }
         
         .business-meta {
             display: flex;
             gap: 30px;
-            font-size: 18px;
+            font-size: 16px;
             opacity: 0.9;
-            margin-top: 20px;
+            margin-bottom: 30px;
             flex-wrap: wrap;
         }
         
@@ -259,7 +309,6 @@ $business = $businesses[$omf_id] ?? [
         .quick-actions {
             display: flex;
             gap: 15px;
-            margin-top: 30px;
             flex-wrap: wrap;
         }
         
@@ -274,6 +323,7 @@ $business = $businesses[$omf_id] ?? [
             align-items: center;
             gap: 8px;
             text-decoration: none;
+            font-weight: 600;
         }
         
         .action-btn-hero.primary {
@@ -284,11 +334,52 @@ $business = $businesses[$omf_id] ?? [
         .action-btn-hero.secondary {
             background: rgba(255,255,255,0.2);
             color: white;
+            border: 1px solid rgba(255,255,255,0.3);
         }
         
         .action-btn-hero:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 20px var(--shadow-heavy);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+        }
+
+        /* Hero Image */
+        .hero-visual {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .hero-image {
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            border-radius: 20px;
+            object-fit: cover;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .hero-image-placeholder {
+            width: 100%;
+            max-width: 400px;
+            height: 400px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 20px;
+            backdrop-filter: blur(20px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed rgba(255,255,255,0.3);
+            color: white;
+            font-size: 18px;
+            text-align: center;
+            transition: all 0.4s ease;
+        }
+
+        .hero-image-placeholder:hover {
+            background: rgba(255,255,255,0.2);
+            border-color: rgba(255,255,255,0.6);
+            transform: scale(1.02);
         }
         
         /* Menu Container */
@@ -304,71 +395,53 @@ $business = $businesses[$omf_id] ?? [
         .menu-section {
             background: var(--card-bg);
             border-radius: 20px;
-            padding: 30px;
+            padding: 40px;
             box-shadow: 0 10px 40px var(--shadow-medium);
-            margin-bottom: 30px;
+            margin-bottom: 50px;
             border: 1px solid var(--border-color);
         }
         
         .section-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid var(--border-color);
+            text-align: center;
+            margin-bottom: 40px;
         }
         
         .section-title {
-            font-size: 28px;
-            font-weight: bold;
-            color: var(--text-primary);
-        }
-        
-        .view-toggle {
-            display: flex;
-            gap: 10px;
-        }
-        
-        .toggle-btn {
-            padding: 8px 16px;
-            border: 2px solid var(--border-color);
-            background: var(--card-bg);
-            color: var(--text-primary);
-            border-radius: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .toggle-btn.active {
+            font-size: 36px;
+            font-weight: 900;
             background: var(--gradient);
-            color: white;
-            border-color: transparent;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
         }
-        
-        .toggle-btn:hover:not(.active) {
-            border-color: var(--accent-color);
+
+        .section-subtitle {
+            color: var(--text-secondary);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto;
         }
         
         /* Menu Grid */
         .menu-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
             gap: 25px;
         }
         
         .menu-item {
             background: var(--bg-tertiary);
             border-radius: 15px;
-            padding: 20px;
+            padding: 25px;
             transition: all 0.3s;
             cursor: pointer;
             border: 1px solid var(--border-color);
         }
         
         .menu-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 20px var(--shadow-medium);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px var(--shadow-medium);
             border-color: var(--accent-color);
         }
         
@@ -376,13 +449,14 @@ $business = $businesses[$omf_id] ?? [
             display: flex;
             justify-content: space-between;
             align-items: start;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
         }
         
         .menu-item-name {
             font-size: 20px;
             font-weight: bold;
             color: var(--text-primary);
+            flex: 1;
         }
         
         .menu-item-price {
@@ -392,13 +466,14 @@ $business = $businesses[$omf_id] ?? [
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            margin-left: 15px;
         }
         
         .menu-item-description {
             color: var(--text-secondary);
-            font-size: 14px;
-            line-height: 1.5;
-            margin-bottom: 10px;
+            font-size: 15px;
+            line-height: 1.6;
+            margin-bottom: 15px;
         }
         
         .menu-item-tags {
@@ -408,12 +483,13 @@ $business = $businesses[$omf_id] ?? [
         }
         
         .tag {
-            padding: 4px 10px;
+            padding: 4px 12px;
             background: var(--card-bg);
             border: 1px solid var(--border-color);
             border-radius: 12px;
             font-size: 12px;
             color: var(--text-secondary);
+            font-weight: 600;
         }
         
         .tag.spicy {
@@ -428,70 +504,133 @@ $business = $businesses[$omf_id] ?? [
             border-color: rgba(255, 152, 0, 0.3);
         }
         
-        .tag.veg {
+        .tag.vegetarian {
             background: rgba(76, 175, 80, 0.1);
             color: #4caf50;
             border-color: rgba(76, 175, 80, 0.3);
         }
-        
-        /* CTA Section */
-        .cta-section {
-            background: var(--gradient);
-            color: white;
+
+        /* Gallery Section */
+        .gallery-section {
+            margin: 60px 0;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            grid-template-rows: repeat(8, 80px);
+            gap: 20px;
+        }
+
+        .gallery-item {
+            background: var(--bg-tertiary);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed var(--border-color);
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
+            transition: all 0.4s ease;
+            cursor: pointer;
             text-align: center;
-            padding: 50px 20px;
-            border-radius: 20px;
-            margin-top: 50px;
+            position: relative;
+            overflow: hidden;
         }
-        
-        .cta-section h2 {
-            font-size: 32px;
-            margin-bottom: 15px;
+
+        /* Different gallery item sizes */
+        .gallery-item.large {
+            grid-column: span 5;
+            grid-row: span 3;
         }
-        
-        .cta-section p {
-            font-size: 18px;
-            opacity: 0.9;
-            margin-bottom: 30px;
+
+        .gallery-item.medium {
+            grid-column: span 4; 
+            grid-row: span 2;
         }
-        
-        .cta-button {
-            background: white;
-            color: var(--accent-color);
-            padding: 15px 40px;
-            border-radius: 30px;
-            text-decoration: none;
-            display: inline-block;
-            font-weight: bold;
-            transition: all 0.3s;
+
+        .gallery-item.small {
+            grid-column: span 3;
+            grid-row: span 2;
         }
-        
-        .cta-button:hover {
+
+        /* Specific positioning for artistic layout */
+        .gallery-item:nth-child(1) {
+            grid-column: 1 / 6;
+            grid-row: 1 / 4;
+        }
+
+        .gallery-item:nth-child(2) {
+            grid-column: 6 / 10;
+            grid-row: 1 / 3;
+        }
+
+        .gallery-item:nth-child(3) {
+            grid-column: 10 / 13;
+            grid-row: 1 / 3;
+        }
+
+        .gallery-item:nth-child(4) {
+            grid-column: 1 / 5;
+            grid-row: 4 / 7;
+        }
+
+        .gallery-item:nth-child(5) {
+            grid-column: 5 / 8;
+            grid-row: 3 / 6;
+        }
+
+        .gallery-item:nth-child(6) {
+            grid-column: 8 / 13;
+            grid-row: 3 / 6;
+        }
+
+        .gallery-item:hover {
+            border-color: var(--accent-color);
             transform: scale(1.05);
-            box-shadow: 0 10px 30px var(--shadow-heavy);
+            box-shadow: 0 15px 35px var(--shadow-medium);
+            background: var(--card-bg);
+        }
+
+        /* Gallery image display */
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 13px;
         }
 
         /* Empty State */
         .empty-state {
-            grid-column: 1/-1;
             text-align: center;
             padding: 60px 20px;
             background: var(--bg-tertiary);
             border-radius: 15px;
             border: 2px dashed var(--border-color);
+            grid-column: 1/-1;
         }
 
         .empty-state h3 {
             color: var(--text-secondary);
-            margin-bottom: 20px;
+            margin-bottom: 15px;
+            font-size: 24px;
         }
 
         .empty-state p {
             color: var(--text-muted);
+            font-size: 16px;
         }
         
         /* Mobile Responsive */
         @media (max-width: 768px) {
+            .business-hero-content {
+                grid-template-columns: 1fr;
+                gap: 40px;
+                text-align: center;
+            }
+
             .business-info h1 {
                 font-size: 32px;
             }
@@ -502,11 +641,12 @@ $business = $businesses[$omf_id] ?? [
             
             .business-meta {
                 flex-direction: column;
-                gap: 10px;
+                gap: 15px;
+                align-items: center;
             }
             
             .quick-actions {
-                flex-wrap: wrap;
+                justify-content: center;
             }
 
             .header-actions {
@@ -522,11 +662,24 @@ $business = $businesses[$omf_id] ?? [
                 padding: 10px 20px;
                 font-size: 14px;
             }
+
+            .gallery-grid {
+                grid-template-columns: repeat(2, 1fr);
+                grid-template-rows: repeat(8, 100px);
+                gap: 15px;
+            }
+
+            .gallery-item:nth-child(1) { grid-column: 1 / 3; grid-row: 1 / 3; }
+            .gallery-item:nth-child(2) { grid-column: 1 / 2; grid-row: 3 / 5; }
+            .gallery-item:nth-child(3) { grid-column: 2 / 3; grid-row: 3 / 5; }
+            .gallery-item:nth-child(4) { grid-column: 1 / 3; grid-row: 5 / 7; }
+            .gallery-item:nth-child(5) { grid-column: 1 / 2; grid-row: 7 / 9; }
+            .gallery-item:nth-child(6) { grid-column: 2 / 3; grid-row: 7 / 9; }
         }
     </style>
 </head>
 <body>
-    <!-- Header with Dark Mode & Settings -->
+    <!-- Header -->
     <header class="header">
         <div class="header-content">
             <a href="/" class="logo">
@@ -552,20 +705,34 @@ $business = $businesses[$omf_id] ?? [
     <!-- Business Hero -->
     <div class="business-hero">
         <div class="business-hero-content">
-            <a href="/" class="back-button">← Back to Directory</a>
             <div class="business-info">
-                <h1><?php echo htmlspecialchars($business['name']); ?></h1>
-                <p style="font-size: 20px; opacity: 0.9;"><?php echo htmlspecialchars($business['description']); ?></p>
+                <a href="/" class="back-button">← Back to Directory</a>
+                <div class="business-type"><?php echo htmlspecialchars($business['business_type']); ?></div>
+                <h1><?php echo htmlspecialchars($business['name_business']); ?></h1>
+                <p class="business-description"><?php echo htmlspecialchars($business['description_business']); ?></p>
                 <div class="business-meta">
-                    <div class="meta-item">📍 <?php echo htmlspecialchars($business['address']); ?></div>
+                    <div class="meta-item">📍 <?php echo htmlspecialchars($business['address_business']); ?></div>
                     <div class="meta-item">⭐ 4.8 (324 reviews)</div>
-                    <div class="meta-item"><?php echo $business['type']; ?></div>
+                    <div class="meta-item">🕒 Open until 11 PM</div>
                 </div>
                 <div class="quick-actions">
-                    <button class="action-btn-hero primary" onclick="handleCall()">📞 Call Now</button>
-                    <button class="action-btn-hero secondary" onclick="handleDirections()">🗺️ Get Directions</button>
-                    <button class="action-btn-hero secondary" onclick="handleShare()">📤 Share</button>
+                    <a href="tel:<?php echo htmlspecialchars($business['phone_business'] ?? '+66212345678'); ?>" class="action-btn-hero primary">📞 Call Now</a>
+                    <button class="action-btn-hero secondary" onclick="scrollToMenu()">📋 View Menu</button>
+                    <button class="action-btn-hero secondary" onclick="handleDirections()">📍 Directions</button>
                 </div>
+            </div>
+            
+            <div class="hero-visual">
+                <?php if ($business['hero_image_url']): ?>
+                    <img src="<?php echo htmlspecialchars($business['hero_image_url']); ?>" 
+                         alt="<?php echo htmlspecialchars($business['name_business']); ?>" 
+                         class="hero-image" loading="lazy">
+                <?php else: ?>
+                    <div class="hero-image-placeholder">
+                        📸 Hero Image<br>
+                        <small style="margin-top: 10px; opacity: 0.8;">(1200x600px recommended)</small>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -573,196 +740,64 @@ $business = $businesses[$omf_id] ?? [
     <!-- Menu Container -->
     <div class="container">
         <!-- Menu Section -->
-        <div class="menu-section">
+        <div class="menu-section" id="menu">
             <div class="section-header">
-                <h2 class="section-title">Menu</h2>
-                <div class="view-toggle">
-                    <button class="toggle-btn active" onclick="switchView('grid')">Grid View</button>
-                    <button class="toggle-btn" onclick="switchView('list')">List View</button>
-                </div>
+                <h2 class="section-title">
+                    <?php echo htmlspecialchars($featuredSection['name'] ?? 'Our Menu'); ?>
+                </h2>
+                <p class="section-subtitle">
+                    Handcrafted with love using the finest ingredients and our signature recipes.
+                </p>
             </div>
             
-            <div class="menu-grid" id="menuGrid">
-                <?php if ($omf_id == 'tonys-pizza'): ?>
-                    <!-- Pizza Menu Items -->
+            <div class="menu-grid">
+                <?php if (!empty($menuItems)): ?>
+                    <?php foreach ($menuItems as $item): ?>
                     <div class="menu-item">
                         <div class="menu-item-header">
-                            <div class="menu-item-name">Margherita Pizza</div>
-                            <div class="menu-item-price">฿350</div>
+                            <div class="menu-item-name"><?php echo htmlspecialchars($item['name_product']); ?></div>
+                            <div class="menu-item-price">₿<?php echo htmlspecialchars($item['price_product']); ?></div>
                         </div>
                         <div class="menu-item-description">
-                            Classic Italian pizza with San Marzano tomato sauce, fresh mozzarella, basil, and extra virgin olive oil
+                            <?php echo htmlspecialchars($item['description_product']); ?>
                         </div>
                         <div class="menu-item-tags">
-                            <span class="tag veg">Vegetarian</span>
+                            <!-- You can add dynamic tags here based on product properties -->
                             <span class="tag popular">Popular</span>
                         </div>
                     </div>
-                    
-                    <div class="menu-item">
-                        <div class="menu-item-header">
-                            <div class="menu-item-name">Pepperoni Pizza</div>
-                            <div class="menu-item-price">฿420</div>
-                        </div>
-                        <div class="menu-item-description">
-                            Loaded with double pepperoni, mozzarella cheese, and our signature tomato sauce
-                        </div>
-                        <div class="menu-item-tags">
-                            <span class="tag spicy">Spicy</span>
-                            <span class="tag popular">Popular</span>
-                        </div>
-                    </div>
-                    
-                    <div class="menu-item">
-                        <div class="menu-item-header">
-                            <div class="menu-item-name">Hawaiian Pizza</div>
-                            <div class="menu-item-price">฿380</div>
-                        </div>
-                        <div class="menu-item-description">
-                            Ham, pineapple, mozzarella cheese with tomato sauce base
-                        </div>
-                        <div class="menu-item-tags">
-                            <span class="tag">Sweet & Savory</span>
-                        </div>
-                    </div>
-                    
-                    <div class="menu-item">
-                        <div class="menu-item-header">
-                            <div class="menu-item-name">Caesar Salad</div>
-                            <div class="menu-item-price">฿220</div>
-                        </div>
-                        <div class="menu-item-description">
-                            Fresh romaine lettuce, parmesan cheese, croutons, and our house-made Caesar dressing
-                        </div>
-                        <div class="menu-item-tags">
-                            <span class="tag veg">Vegetarian</span>
-                        </div>
-                    </div>
-                    
-                    <div class="menu-item">
-                        <div class="menu-item-header">
-                            <div class="menu-item-name">Carbonara Pasta</div>
-                            <div class="menu-item-price">฿280</div>
-                        </div>
-                        <div class="menu-item-description">
-                            Creamy pasta with crispy bacon, egg yolk, parmesan cheese, and black pepper
-                        </div>
-                        <div class="menu-item-tags">
-                            <span class="tag popular">Popular</span>
-                        </div>
-                    </div>
-                    
-                    <div class="menu-item">
-                        <div class="menu-item-header">
-                            <div class="menu-item-name">Tiramisu</div>
-                            <div class="menu-item-price">฿180</div>
-                        </div>
-                        <div class="menu-item-description">
-                            Classic Italian dessert with coffee-soaked ladyfingers, mascarpone cream, and cocoa
-                        </div>
-                        <div class="menu-item-tags">
-                            <span class="tag">Dessert</span>
-                            <span class="tag popular">Popular</span>
-                        </div>
-                    </div>
-                    
-                <?php elseif ($omf_id == 'marias-spa'): ?>
-                    <!-- Spa Services -->
-                    <div class="menu-item">
-                        <div class="menu-item-header">
-                            <div class="menu-item-name">Traditional Thai Massage</div>
-                            <div class="menu-item-price">฿600/hr</div>
-                        </div>
-                        <div class="menu-item-description">
-                            Full body traditional Thai massage focusing on pressure points and stretching
-                        </div>
-                        <div class="menu-item-tags">
-                            <span class="tag popular">Popular</span>
-                        </div>
-                    </div>
-                    
-                    <div class="menu-item">
-                        <div class="menu-item-header">
-                            <div class="menu-item-name">Aromatherapy Oil Massage</div>
-                            <div class="menu-item-price">฿800/hr</div>
-                        </div>
-                        <div class="menu-item-description">
-                            Relaxing oil massage with your choice of essential oils
-                        </div>
-                        <div class="menu-item-tags">
-                            <span class="tag">Relaxing</span>
-                        </div>
-                    </div>
-                    
-                    <div class="menu-item">
-                        <div class="menu-item-header">
-                            <div class="menu-item-name">Foot Reflexology</div>
-                            <div class="menu-item-price">฿400/45min</div>
-                        </div>
-                        <div class="menu-item-description">
-                            Traditional foot massage focusing on reflex points
-                        </div>
-                        <div class="menu-item-tags">
-                            <span class="tag popular">Popular</span>
-                        </div>
-                    </div>
-                    
-                <?php elseif ($omf_id == 'johns-coffee'): ?>
-                    <!-- Coffee Menu -->
-                    <div class="menu-item">
-                        <div class="menu-item-header">
-                            <div class="menu-item-name">Cappuccino</div>
-                            <div class="menu-item-price">฿120</div>
-                        </div>
-                        <div class="menu-item-description">
-                            Double shot espresso with steamed milk and perfect foam art
-                        </div>
-                        <div class="menu-item-tags">
-                            <span class="tag popular">Popular</span>
-                        </div>
-                    </div>
-                    
-                    <div class="menu-item">
-                        <div class="menu-item-header">
-                            <div class="menu-item-name">Iced Americano</div>
-                            <div class="menu-item-price">฿100</div>
-                        </div>
-                        <div class="menu-item-description">
-                            Double shot espresso over ice with cold water
-                        </div>
-                        <div class="menu-item-tags">
-                            <span class="tag">Refreshing</span>
-                        </div>
-                    </div>
-                    
-                    <div class="menu-item">
-                        <div class="menu-item-header">
-                            <div class="menu-item-name">Croissant</div>
-                            <div class="menu-item-price">฿90</div>
-                        </div>
-                        <div class="menu-item-description">
-                            Freshly baked buttery French croissant
-                        </div>
-                        <div class="menu-item-tags">
-                            <span class="tag">Fresh Daily</span>
-                        </div>
-                    </div>
-                    
+                    <?php endforeach; ?>
                 <?php else: ?>
-                    <!-- Default for unknown businesses -->
+                    <!-- Fallback content when no menu items -->
                     <div class="empty-state">
                         <h3>Menu Coming Soon!</h3>
-                        <p>This business hasn't uploaded their menu yet.</p>
+                        <p>This business is setting up their delicious menu. Check back soon!</p>
                     </div>
                 <?php endif; ?>
             </div>
         </div>
         
-        <!-- CTA Section -->
-        <div class="cta-section">
-            <h2>Is this your business?</h2>
-            <p>Take control of your OMFID profile and keep your menu always up to date</p>
-            <a href="https://make.openmenuformat.com" target="_blank" class="cta-button">Claim This Business - It's Free!</a>
+        <!-- Gallery Section -->
+        <div class="gallery-section">
+            <div class="gallery-grid">
+                <?php if (!empty($galleryImages)): ?>
+                    <?php foreach ($galleryImages as $index => $image): ?>
+                    <div class="gallery-item">
+                        <img src="<?php echo htmlspecialchars($image['url']); ?>" 
+                             alt="<?php echo htmlspecialchars($image['alt'] ?? 'Gallery image'); ?>"
+                             loading="lazy">
+                    </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <!-- Default gallery placeholders -->
+                    <?php foreach ($defaultGallery as $item): ?>
+                    <div class="gallery-item <?php echo $item['size']; ?>">
+                        📸 <?php echo $item['label']; ?><br>
+                        <small style="opacity: 0.7; margin-top: 5px;">Upload image</small>
+                    </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
         </div>
     </div>
 
@@ -770,35 +805,22 @@ $business = $businesses[$omf_id] ?? [
     <script src="/js/theme.js"></script>
     
     <script>
-        // View Toggle
-        function switchView(viewType) {
-            const buttons = document.querySelectorAll('.toggle-btn');
-            const menuGrid = document.getElementById('menuGrid');
-            
-            buttons.forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            
-            if (viewType === 'list') {
-                menuGrid.style.gridTemplateColumns = '1fr';
-            } else {
-                menuGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(350px, 1fr))';
-            }
-        }
-
         // Business Actions
-        function handleCall() {
-            window.location.href = 'tel:+6621234567';
+        function scrollToMenu() {
+            document.getElementById('menu').scrollIntoView({ behavior: 'smooth' });
         }
         
         function handleDirections() {
-            window.open('https://maps.google.com/?q=<?php echo urlencode($business['name'] . ' ' . $business['address']); ?>', '_blank');
+            const businessName = <?php echo json_encode($business['name_business']); ?>;
+            const address = <?php echo json_encode($business['address_business']); ?>;
+            window.open(`https://maps.google.com/?q=${encodeURIComponent(businessName + ' ' + address)}`, '_blank');
         }
         
         function handleShare() {
             if (navigator.share) {
                 navigator.share({
-                    title: '<?php echo addslashes($business['name']); ?>',
-                    text: 'Check out <?php echo addslashes($business['name']); ?> on OMFID!',
+                    title: <?php echo json_encode($business['name_business']); ?>,
+                    text: `Check out ${<?php echo json_encode($business['name_business']); ?>} on OMFID!`,
                     url: window.location.href
                 });
             } else {
@@ -812,6 +834,31 @@ $business = $businesses[$omf_id] ?? [
             console.log('Language changed to:', lang);
             // In production, this would translate the content
         }
+
+        // Initialize theme on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize theme using existing theme.js
+            const themeToggle = document.getElementById('themeToggle');
+            const themeIcon = themeToggle.querySelector('.theme-icon');
+
+            // Load saved theme - SAME KEY AS HOMEPAGE
+            const savedTheme = localStorage.getItem('darkMode') === 'true' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+
+            themeToggle.addEventListener('click', () => {
+                const currentTheme = document.documentElement.getAttribute('data-theme');
+                const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+                
+                document.documentElement.setAttribute('data-theme', newTheme);
+                localStorage.setItem('darkMode', newTheme === 'dark');
+                updateThemeIcon(newTheme);
+            });
+
+            function updateThemeIcon(theme) {
+                themeIcon.textContent = theme === 'dark' ? '☀️' : '🌙';
+            }
+        });
     </script>
 </body>
 </html>
