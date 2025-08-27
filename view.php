@@ -3,8 +3,8 @@
 $omf_id = $_GET['id'] ?? 'unknown';
 
 // Supabase configuration
-$SUPABASE_URL = "https://your-project.supabase.co"; // UPDATE THIS
-$SUPABASE_ANON_KEY = "your-anon-key-here"; // UPDATE THIS
+$SUPABASE_URL = "https://au.openmenuformat.com"; // UPDATE THIS
+$SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtpem5jbnBodHJmbXZmeXB3c3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ3MDU5MDQsImV4cCI6MjA1MDI4MTkwNH0.pjBXIE317d6cFbwaDJwBVmhNXcRU2TnwbhS9jCOhrvc"; // UPDATE THIS
 
 // Function to make Supabase API calls
 function supabaseQuery($table, $select = '*', $filters = []) {
