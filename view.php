@@ -57,15 +57,16 @@ if ($SUPABASE_URL !== "https://your-project.supabase.co") {
     );
 }
 
-// Add this after the Supabase query
-error_log("Searching for omf_id: " . $omf_id);
-error_log("Supabase response: " . json_encode($businessData));
-
-if (!$businessData || empty($businessData)) {
-    error_log("No data found in Supabase for: " . $omf_id);
-    // Then it falls back to sample data
+// Add this right after line 60 (after the Supabase query attempt)
+echo "<div style='background: yellow; padding: 10px; margin: 10px;'>";
+echo "DEBUG INFO:<br>";
+echo "Looking for omf_id: " . htmlspecialchars($omf_id) . "<br>";
+echo "Supabase URL configured: " . ($SUPABASE_URL !== "https://your-project.supabase.co" ? "YES" : "NO") . "<br>";
+echo "BusinessData result: " . (empty($businessData) ? "EMPTY" : "FOUND " . count($businessData) . " records") . "<br>";
+if (!empty($businessData)) {
+    echo "First record: " . htmlspecialchars(json_encode($businessData[0])) . "<br>";
 }
-
+echo "</div>";
 
 
 
