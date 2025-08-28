@@ -730,11 +730,11 @@ $totalProducts = count(supabaseQuery('products', 'id_product', []));
         <div class="stat-label">Active Businesses</div>
     </div>
     <div class="stat-item">
-        <div class="stat-number"><?php echo number_format($totalProducts ?: 12394); ?></div>
+        <div class="stat-number"><?php echo number_format($totalProducts ?: 193); ?></div>
         <div class="stat-label">Menu Items</div>
     </div>
     <div class="stat-item">
-        <div class="stat-number">48</div>
+        <div class="stat-number">2</div>
         <div class="stat-label">Cities</div>
     </div>
     <div class="stat-item">
