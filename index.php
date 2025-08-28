@@ -39,7 +39,7 @@ function supabaseQuery($table, $select = '*', $filters = []) {
 // Get trending businesses (approved only, newest first)
 $trendingBusinesses = supabaseQuery(
     'business',
-    'name_business,description_business,business_type,omfid_slug,created_at_business',
+    'name_business,description_business,business_type,omfid_slug,created_at_business,image_business',
     [
         'moderation_status' => 'eq.approved',
         'order' => 'created_at_business.desc',

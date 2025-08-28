@@ -49,7 +49,7 @@ $businessData = null;
 // NEW:
 $businessData = supabaseQuery(
     'business',
-    'id_business,name_business,description_business,address_business,business_type,omfid_slug',
+    'id_business,name_business,description_business,address_business,business_type,omfid_slug,image_business',
     [
         'omfid_slug' => "eq.$omf_id",
         'moderation_status' => "eq.approved"
@@ -836,9 +836,15 @@ $menuData = $sampleMenus[$omf_id] ?? [
             
             <div class="hero-visual">
                 <div class="hero-image-placeholder">
-                    📸 Hero Image<br>
-                <small style="margin-top: 10px; opacity: 0.8;">(1000x1000px recommended)</small>
-                </div>
+    <?php if (!empty($business['image_business'])): ?>
+        <img src="<?php echo htmlspecialchars($business['image_business']); ?>" 
+             alt="<?php echo htmlspecialchars($business['name_business']); ?>"
+             style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;">
+    <?php else: ?>
+        📸 Hero Image<br>
+        <small style="margin-top: 10px; opacity: 0.8;">(1000x1000px recommended)</small>
+    <?php endif; ?>
+</div>
             </div>
         </div>
     </div>
