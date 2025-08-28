@@ -56,7 +56,7 @@ $businessData = supabaseQuery(
 );
 
 // Add this right after line 60 (after the Supabase query attempt)
-echo "<div style='background: yellow; padding: 10px; margin: 10px;'>";
+echo "<div style='background: black; padding: 10px; margin: 10px;'>";
 echo "DEBUG INFO:<br>";
 echo "Looking for omf_id: " . htmlspecialchars($omf_id) . "<br>";
 echo "Supabase URL configured: " . ($SUPABASE_URL !== "https://your-project.supabase.co" ? "YES" : "NO") . "<br>";
@@ -66,7 +66,16 @@ if (!empty($businessData)) {
 }
 echo "</div>";
 
-
+// Add this right after the yellow debug box
+$testQuery = supabaseQuery('business', '*', []);
+echo "<div style='background: lightblue; padding: 10px; margin: 10px;'>";
+echo "SUPABASE TEST:<br>";
+echo "All records count: " . (empty($testQuery) ? "0 or ERROR" : count($testQuery)) . "<br>";
+if (!empty($testQuery)) {
+    echo "First record fields: " . implode(', ', array_keys($testQuery[0])) . "<br>";
+    echo "Sample record: " . htmlspecialchars(json_encode($testQuery[0])) . "<br>";
+}
+echo "</div>";
 
 // Fallback to sample data if Supabase not configured or no data found
 if (!$businessData || empty($businessData)) {
