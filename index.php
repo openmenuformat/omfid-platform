@@ -754,12 +754,20 @@ $totalProducts = count(supabaseQuery('products', 'id_product', []));
 <div class="business-grid">
     <?php foreach ($trendingBusinesses as $index => $business): ?>
     <a href="/<?php echo htmlspecialchars($business['omfid_slug']); ?>" class="business-card">
-        <div class="business-image">
-            <span class="business-badge <?php echo $index < 2 ? 'new' : ''; ?>">
-                <?php echo $index < 2 ? 'NEW' : 'OPEN NOW'; ?>
-            </span>
-            📸 Business Image
+       <div class="business-image">
+    <span class="business-badge <?php echo $index < 2 ? 'new' : ''; ?>">
+        <?php echo $index < 2 ? 'NEW' : 'OPEN NOW'; ?>
+    </span>
+    <?php if (!empty($business['image_business'])): ?>
+        <img src="<?php echo htmlspecialchars($business['image_business']); ?>" 
+             alt="<?php echo htmlspecialchars($business['name_business']); ?>"
+             style="width: 100%; height: 100%; object-fit: cover;">
+    <?php else: ?>
+        <div style="display: flex; align-items: center; justify-content: center; height: 100%; color: var(--text-muted);">
+            📸 Business Image<br><small>(1000x1000px recommended)</small>
         </div>
+    <?php endif; ?>
+</div>
         <div class="business-content">
             <h3 class="business-name"><?php echo htmlspecialchars($business['name_business']); ?></h3>
             <p class="business-type">
