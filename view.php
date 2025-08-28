@@ -836,7 +836,7 @@ $menuData = $sampleMenus[$omf_id] ?? [
             <div class="hero-visual">
                 <div class="hero-image-placeholder">
                     📸 Hero Image<br>
-                    <small style="margin-top: 10px; opacity: 0.8;">(1200x600px recommended)</small>
+                <small style="margin-top: 10px; opacity: 0.8;">(1000x1000px recommended)</small>
                 </div>
             </div>
         </div>
