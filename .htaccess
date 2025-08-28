@@ -23,7 +23,7 @@ RewriteRule ^api/(.*)$ api/$1 [L]
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_URI} !^/(css|js|assets|api)/
-RewriteRule ^([a-z0-9-]+)$ view.php?id=$1 [L,QSA]
+RewriteRule ^([a-zA-Z0-9-]+)/?$ view.php?id=$1 [L,QSA]
 
 # ================================================
 # SECURITY HEADERS
