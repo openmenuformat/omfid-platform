@@ -57,6 +57,18 @@ if ($SUPABASE_URL !== "https://your-project.supabase.co") {
     );
 }
 
+// Add this after the Supabase query
+error_log("Searching for omf_id: " . $omf_id);
+error_log("Supabase response: " . json_encode($businessData));
+
+if (!$businessData || empty($businessData)) {
+    error_log("No data found in Supabase for: " . $omf_id);
+    // Then it falls back to sample data
+}
+
+
+
+
 // Fallback to sample data if Supabase not configured or no data found
 if (!$businessData || empty($businessData)) {
     // Sample business data for testing
