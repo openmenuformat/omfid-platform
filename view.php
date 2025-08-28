@@ -46,16 +46,14 @@ function supabaseQuery($table, $select = '*', $filters = []) {
 // Try to get business data from Supabase
 $businessData = null;
 
-// First try to get business by omf_id (if this field exists)
-if ($SUPABASE_URL !== "https://your-project.supabase.co") {
-    $businessData = supabaseQuery(
-        'business',
-        'id_business,name_business,description_business,address_business,business_type,phone_business,email_business',
-        [
-            'omf_id' => "eq.$omf_id"
-        ]
-    );
-}
+// NEW:
+$businessData = supabaseQuery(
+    'business',
+    'id_business,name_business,description_business,address_business,business_type,phone_business,email_business',
+    [
+        'omfid_slug' => "eq.$omf_id"  // ✅ Correct field name
+    ]
+);
 
 // Add this right after line 60 (after the Supabase query attempt)
 echo "<div style='background: yellow; padding: 10px; margin: 10px;'>";
