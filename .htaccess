@@ -7,8 +7,8 @@ RewriteEngine On
 # RewriteCond %{HTTPS} off
 # RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
 
-# Homepage
-RewriteRule ^$ index.html [L]
+# Homepage - serve index.php instead of index.html
+RewriteRule ^$ index.php [L]
 
 # Special pages (if needed later)
 RewriteRule ^discover$ discover.php [L]

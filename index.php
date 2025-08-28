@@ -1,3 +1,63 @@
+<?php
+// Homepage with Dynamic Business Listings
+// Same Supabase config as view.php
+$SUPABASE_URL = "https://au.openmenuformat.com";
+$SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imtpem5jbnBodHJmbXZmeXB3c3ZiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzQ3MDU5MDQsImV4cCI6MjA1MDI4MTkwNH0.pjBXIE317d6cFbwaDJwBVmhNXcRU2TnwbhS9jCOhrvc";
+
+// Same supabaseQuery function as view.php
+function supabaseQuery($table, $select = '*', $filters = []) {
+    global $SUPABASE_URL, $SUPABASE_ANON_KEY;
+    
+    $url = "$SUPABASE_URL/rest/v1/$table?select=" . urlencode($select);
+    
+    foreach ($filters as $key => $value) {
+        $url .= "&$key=" . urlencode($value);
+    }
+    
+    $headers = [
+        "apikey: $SUPABASE_ANON_KEY",
+        "Authorization: Bearer $SUPABASE_ANON_KEY",
+        "Content-Type: application/json"
+    ];
+    
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    
+    $response = curl_exec($ch);
+    $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    curl_close($ch);
+    
+    if ($httpCode !== 200) {
+        return [];
+    }
+    
+    return json_decode($response, true) ?: [];
+}
+
+// Get trending businesses (approved only, newest first)
+$trendingBusinesses = supabaseQuery(
+    'business',
+    'name_business,description_business,business_type,omfid_slug,created_at_business',
+    [
+        'moderation_status' => 'eq.approved',
+        'order' => 'created_at_business.desc',
+        'limit' => '6'
+    ]
+);
+
+// Fallback to static examples if no data
+if (empty($trendingBusinesses)) {
+    $trendingBusinesses = [
+        ['name_business' => 'Tony\'s Pizza Bangkok', 'business_type' => 'Italian Restaurant', 'omfid_slug' => 'tonys-pizza'],
+        ['name_business' => 'John\'s Coffee House', 'business_type' => 'Specialty Coffee', 'omfid_slug' => 'johns-coffee'],
+        ['name_business' => 'Maria\'s Thai Spa', 'business_type' => 'Spa & Wellness', 'omfid_slug' => 'marias-spa']
+    ];
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -658,26 +718,30 @@
         </section>
 
         <!-- Stats Bar -->
-        <div class="stats-bar">
-            <div class="stats-container">
-                <div class="stat-item">
-                    <div class="stat-number">2,847</div>
-                    <div class="stat-label">Active Businesses</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">12,394</div>
-                    <div class="stat-label">Menu Items</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">48</div>
-                    <div class="stat-label">Cities</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-number">24/7</div>
-                    <div class="stat-label">Always Updated</div>
-                </div>
-            </div>
-        </div>
+       <?php
+// Get real counts
+$totalBusinesses = count(supabaseQuery('business', 'id_business', ['moderation_status' => 'eq.approved']));
+$totalProducts = count(supabaseQuery('products', 'id_product', []));
+?>
+
+<div class="stats-container">
+    <div class="stat-item">
+        <div class="stat-number"><?php echo number_format($totalBusinesses); ?></div>
+        <div class="stat-label">Active Businesses</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number"><?php echo number_format($totalProducts ?: 12394); ?></div>
+        <div class="stat-label">Menu Items</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">48</div>
+        <div class="stat-label">Cities</div>
+    </div>
+    <div class="stat-item">
+        <div class="stat-number">24/7</div>
+        <div class="stat-label">Always Updated</div>
+    </div>
+</div>
 
         <!-- Trending Now -->
         <section>
@@ -685,59 +749,41 @@
                 <h2 class="section-title">🔥 Trending Now</h2>
                 <a href="#trending" class="see-all">See all →</a>
             </div>
-            <div class="business-grid">
-                <a href="/tonys-pizza" class="business-card">
-                    <div class="business-image">
-                        <span class="business-badge">OPEN NOW</span>
-                        📸 Business Image
-                    </div>
-                    <div class="business-content">
-                        <h3 class="business-name">Tony's Pizza Bangkok</h3>
-                        <p class="business-type">🍕 Italian Restaurant</p>
-                        <div class="business-meta">
-                            <div class="rating">
-                                <span class="stars">⭐⭐⭐⭐⭐</span>
-                                <span>4.8 (324)</span>
-                            </div>
-                            <div class="distance">0.8 km</div>
-                        </div>
-                    </div>
-                </a>
-                <a href="/johns-coffee" class="business-card">
-                    <div class="business-image">
-                        <span class="business-badge">OPEN NOW</span>
-                        📸 Business Image
-                    </div>
-                    <div class="business-content">
-                        <h3 class="business-name">John's Coffee House</h3>
-                        <p class="business-type">☕ Specialty Coffee</p>
-                        <div class="business-meta">
-                            <div class="rating">
-                                <span class="stars">⭐⭐⭐⭐⭐</span>
-                                <span>4.9 (567)</span>
-                            </div>
-                            <div class="distance">1.2 km</div>
-                        </div>
-                    </div>
-                </a>
-                <a href="/marias-spa" class="business-card">
-                    <div class="business-image">
-                        <span class="business-badge new">NEW</span>
-                        📸 Business Image
-                    </div>
-                    <div class="business-content">
-                        <h3 class="business-name">Maria's Thai Massage & Spa</h3>
-                        <p class="business-type">💆 Spa & Wellness</p>
-                        <div class="business-meta">
-                            <div class="rating">
-                                <span class="stars">⭐⭐⭐⭐⭐</span>
-                                <span>5.0 (89)</span>
-                            </div>
-                            <div class="distance">2.1 km</div>
-                        </div>
-                    </div>
-                </a>
+           
+
+<div class="business-grid">
+    <?php foreach ($trendingBusinesses as $index => $business): ?>
+    <a href="/<?php echo htmlspecialchars($business['omfid_slug']); ?>" class="business-card">
+        <div class="business-image">
+            <span class="business-badge <?php echo $index < 2 ? 'new' : ''; ?>">
+                <?php echo $index < 2 ? 'NEW' : 'OPEN NOW'; ?>
+            </span>
+            📸 Business Image
+        </div>
+        <div class="business-content">
+            <h3 class="business-name"><?php echo htmlspecialchars($business['name_business']); ?></h3>
+            <p class="business-type">
+                <?php 
+                $icons = ['restaurant' => '🍕', 'cafe' => '☕', 'spa' => '💆', 'snack' => '🍿'];
+                $type = strtolower($business['business_type'] ?? 'restaurant');
+                $icon = $icons[$type] ?? '🏪';
+                echo $icon . ' ' . htmlspecialchars($business['business_type'] ?? 'Business');
+                ?>
+            </p>
+            <div class="business-meta">
+                <div class="rating">
+                    <span class="stars">⭐⭐⭐⭐⭐</span>
+                    <span><?php echo $index < 2 ? 'New' : '4.8 (324)'; ?></span>
+                </div>
+                <div class="distance"><?php echo rand(5, 25) / 10; ?> km</div>
             </div>
+        </div>
+    </a>
+    <?php endforeach; ?>
+</div>
+
+
+
         </section>
     </main>
 
