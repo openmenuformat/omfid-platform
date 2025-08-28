@@ -49,7 +49,7 @@ $businessData = null;
 // NEW:
 $businessData = supabaseQuery(
     'business',
-
+    'id_business,name_business,description_business,address_business,business_type,omfid_slug',
     [
         'omfid_slug' => "eq.$omf_id",
         'moderation_status' => "eq.approved"
