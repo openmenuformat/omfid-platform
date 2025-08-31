@@ -573,6 +573,7 @@ $trendingBusinesses = supabaseQuery(
             display: block;
             margin-bottom: 0.5rem;
             transition: all var(--transition);
+            text-align: center;
         }
 
         .footer-section a:hover {
