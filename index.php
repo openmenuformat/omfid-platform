@@ -46,7 +46,7 @@ $trendingBusinesses = supabaseQuery(
         'limit' => '6'
     ]
 );
-);
+
 ?>
 
 
