@@ -688,23 +688,7 @@ $trendingBusinesses = supabaseQuery(
         <section>
             <div class="section-header">
                 <h2 class="section-title">✨ Featured This Week</h2>
-            </div>
-            <div class="featured-carousel">
-                <a href="/tonys-pizza" class="featured-card">
-                    <div class="featured-content">
-                        <span class="featured-tag">SPECIAL OFFER</span>
-                        <h3 class="featured-title">Tony's Pizza</h3>
-                        <p class="featured-desc">50% off second pizza every Tuesday!</p>
-                        <span class="featured-cta">View Menu →</span>
-                    </div>
-                </a>
-                <a href="/marias-spa" class="featured-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
-                    <div class="featured-content">
-                        <span class="featured-tag">NEW OPENING</span>
-                        <h3 class="featured-title">Maria's Spa</h3>
-                        <p class="featured-desc">Grand opening special - 30% off all services</p>
-                        <span class="featured-cta">Book Now →</span>
-                    </div>
+            </div>           
                 </a>
             </div>
         </section>
