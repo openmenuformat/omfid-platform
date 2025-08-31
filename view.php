@@ -299,6 +299,13 @@ if ($sectionsData && !empty($sectionsData)) {
         /* CRITICAL: Same CSS variables as homepage */
 
 /* Footer */
+
+.footer-section h3 {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+}
+
 .footer {
     background: var(--bg-primary);
     color: var(--text-secondary);
