@@ -47,7 +47,9 @@ $trendingBusinesses = supabaseQuery(
     ]
 );
 
+// Fallback to static examples if no data
 
+?>
 
 
 <!DOCTYPE html>
