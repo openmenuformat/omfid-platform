@@ -856,5 +856,38 @@ if ($sectionsData && !empty($sectionsData)) {
         // Initialize theme on page load
         ThemeManager.init();
     </script>
+
+
+<!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>For Businesses</h3>
+                <a href="https://make.openmenuformat.com" target="_blank">Add Your Business</a>
+                <a href="https://openmenuformat.com">Pricing</a>
+                <a href="https://openmenuformat.com">Features</a>
+            </div>
+            <div class="footer-section">
+                <h3>Discover</h3>
+                <a href="#restaurants">Restaurants</a>
+                <a href="#cafes">Cafes</a>
+                <a href="#spas">Spas & Massage</a>
+            </div>
+            <div class="footer-section">
+                <h3>Company</h3>
+                <a href="https://openmenuformat.com" target="_blank">About OMF</a>
+                <a href="#">Blog</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 OMFID - Part of the <a href="https://openmenuformat.com" target="_blank">Open Menu Format</a> ecosystem</p>
+            <p>Made with ❤️ in Burbank and Bangkok</p>
+        </div>
+    </footer>
+
+    <script>
+
+
 </body>
 </html>
