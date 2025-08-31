@@ -55,6 +55,17 @@ $businessData = supabaseQuery(
 
 // Check if business exists
 if (!$businessData || empty($businessData)) {
+
+
+// DEBUG: Add this temporarily
+echo "<script>console.log('DEBUG: Looking for omfid_slug = $omf_id');</script>";
+echo "<script>console.log('DEBUG: businessData = " . json_encode($businessData) . "');</script>";
+
+// Also check if Supabase is working at all
+$testQuery = supabaseQuery('business', 'omfid_slug', ['limit' => '5']);
+echo "<script>console.log('DEBUG: All slugs in database = " . json_encode($testQuery) . "');</script>";
+
+
     // Business not found - show 404
     http_response_code(404);
     ?>
