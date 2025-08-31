@@ -690,16 +690,24 @@ $trendingBusinesses = supabaseQuery(
                 <h2 class="section-title">✨ Featured This Week</h2>
             </div>
             <div class="featured-carousel">
-               // Get featured businesses (businesses marked as featured)
-$featuredBusinesses = supabaseQuery(
-    'business',
-    'name_business,description_business,omfid_slug',
-    [
-        'moderation_status' => 'eq.approved',
-        'is_featured' => 'eq.true',  // if you add this field later
-        'limit' => '2'
-    ]
-);
+                <a href="/tonys-pizza" class="featured-card">
+                    <div class="featured-content">
+                        <span class="featured-tag">SPECIAL OFFER</span>
+                        <h3 class="featured-title">Tony's Pizza</h3>
+                        <p class="featured-desc">50% off second pizza every Tuesday!</p>
+                        <span class="featured-cta">View Menu →</span>
+                    </div>
+                </a>
+                <a href="/marias-spa" class="featured-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                    <div class="featured-content">
+                        <span class="featured-tag">NEW OPENING</span>
+                        <h3 class="featured-title">Maria's Spa</h3>
+                        <p class="featured-desc">Grand opening special - 30% off all services</p>
+                        <span class="featured-cta">Book Now →</span>
+                    </div>
+                </a>
+            </div>
+        </section>
 
         <!-- Stats Bar -->
        <?php
