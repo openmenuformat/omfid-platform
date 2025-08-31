@@ -47,15 +47,7 @@ $trendingBusinesses = supabaseQuery(
     ]
 );
 
-// Fallback to static examples if no data
-if (empty($trendingBusinesses)) {
-    $trendingBusinesses = [
-        ['name_business' => 'Tony\'s Pizza Bangkok', 'business_type' => 'Italian Restaurant', 'omfid_slug' => 'tonys-pizza'],
-        ['name_business' => 'John\'s Coffee House', 'business_type' => 'Specialty Coffee', 'omfid_slug' => 'johns-coffee'],
-        ['name_business' => 'Maria\'s Thai Spa', 'business_type' => 'Spa & Wellness', 'omfid_slug' => 'marias-spa']
-    ];
-}
-?>
+
 
 
 <!DOCTYPE html>
