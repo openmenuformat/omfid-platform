@@ -1,6 +1,6 @@
 <?php
-// OMFID Business Viewer - Supabase Integration
-// Updated for proper error handling and dark mode support
+// OMFID Business Viewer - Production Ready
+// Clean version with no sample data, Supabase only
 
 // Get business ID from URL
 $omf_id = $_GET['id'] ?? 'unknown';
@@ -43,62 +43,19 @@ function supabaseQuery($table, $select = '*', $filters = []) {
     return json_decode($response, true);
 }
 
-// Try to get business data from Supabase
-$businessData = null;
-
-// NEW:
+// Get business data from Supabase
 $businessData = supabaseQuery(
     'business',
-    'id_business,name_business,description_business,address_business,business_type,omfid_slug,image_business',
+    'id_business,name_business,description_business,address_business,business_type,omfid_slug,image_business,hours_business,phone_business,email_business',
     [
         'omfid_slug' => "eq.$omf_id",
         'moderation_status' => "eq.approved"
     ]
 );
 
-
-
-// Fallback to sample data if Supabase not configured or no data found
-if (!$businessData || empty($businessData)) {
-    // Sample business data for testing
-    $sampleBusinesses = [
-        'tonys-pizza' => [
-            'id_business' => 'sample-1',
-            'name_business' => "Tony's Pizza Bangkok",
-            'description_business' => "Authentic Italian pizzas made with love and the finest ingredients",
-            'address_business' => "123 Sukhumvit Rd, Khlong Toei, Bangkok",
-            'business_type' => "Italian Restaurant",
-            'phone_business' => "+66 2 123 4567",
-            'email_business' => "hello@tonyspizza.com"
-        ],
-        'johns-coffee' => [
-            'id_business' => 'sample-2',
-            'name_business' => "John's Coffee House",
-            'description_business' => "Premium specialty coffee roasted daily with beans from around the world",
-            'address_business' => "456 Silom Rd, Bang Rak, Bangkok",
-            'business_type' => "Specialty Coffee",
-            'phone_business' => "+66 2 987 6543",
-            'email_business' => "info@johnscoffee.com"
-        ],
-        'marias-spa' => [
-            'id_business' => 'sample-3',
-            'name_business' => "Maria's Thai Massage & Spa",
-            'description_business' => "Traditional Thai massage and modern spa treatments in a serene environment",
-            'address_business' => "789 Phetchaburi Rd, Ratchathewi, Bangkok",
-            'business_type' => "Spa & Wellness",
-            'phone_business' => "+66 2 555 0123",
-            'email_business' => "relax@mariasspa.com"
-        ]
-    ];
-
-    if (isset($sampleBusinesses[$omf_id])) {
-        $businessData = [$sampleBusinesses[$omf_id]];
-    }
-}
-
 // Check if business exists
 if (!$businessData || empty($businessData)) {
-    // Business not found - show proper 404
+    // Business not found - show 404
     http_response_code(404);
     ?>
     <!DOCTYPE html>
@@ -277,74 +234,39 @@ if (!$businessData || empty($businessData)) {
 
 $business = $businessData[0];
 
-// Sample menu items for each business
-$sampleMenus = [
-    'tonys-pizza' => [
-        'section_name' => 'Our Signature Pizzas',
-        'items' => [
-            [
-                'name_product' => 'Margherita Classic',
-                'description_product' => 'San Marzano tomatoes, buffalo mozzarella, fresh basil, extra virgin olive oil',
-                'price_product' => '350'
-            ],
-            [
-                'name_product' => 'Pepperoni Supreme',
-                'description_product' => 'Spicy pepperoni, mozzarella, oregano, tomato sauce',
-                'price_product' => '420'
-            ],
-            [
-                'name_product' => 'Thai Fusion Pizza',
-                'description_product' => 'Tom yum sauce, prawns, mushrooms, chili, lime leaves',
-                'price_product' => '480'
-            ]
-        ]
-    ],
-    'johns-coffee' => [
-        'section_name' => 'Specialty Coffee Selection',
-        'items' => [
-            [
-                'name_product' => 'Ethiopian Single Origin',
-                'description_product' => 'Light roast, floral notes, citrus finish, direct trade',
-                'price_product' => '180'
-            ],
-            [
-                'name_product' => 'Bangkok Blend Espresso',
-                'description_product' => 'Medium roast blend, chocolate notes, perfect for milk drinks',
-                'price_product' => '150'
-            ],
-            [
-                'name_product' => 'Cold Brew Nitro',
-                'description_product' => 'Smooth, creamy, low acidity, served on tap',
-                'price_product' => '200'
-            ]
-        ]
-    ],
-    'marias-spa' => [
-        'section_name' => 'Signature Treatments',
-        'items' => [
-            [
-                'name_product' => 'Traditional Thai Massage',
-                'description_product' => '90-minute full body massage with stretching and pressure points',
-                'price_product' => '1200'
-            ],
-            [
-                'name_product' => 'Aromatherapy Oil Massage',
-                'description_product' => 'Relaxing massage with essential oils, choice of lavender or eucalyptus',
-                'price_product' => '1500'
-            ],
-            [
-                'name_product' => 'Hot Stone Therapy',
-                'description_product' => 'Deep relaxation with heated volcanic stones and therapeutic massage',
-                'price_product' => '1800'
-            ]
-        ]
+// Get menu data from sections and products
+$sectionsData = supabaseQuery(
+    'sections',
+    'id_section,name_section,description_section',
+    [
+        'id_business' => "eq.{$business['id_business']}",
+        'order' => 'created_at_section.asc'
     ]
-];
+);
 
-$menuData = $sampleMenus[$omf_id] ?? [
+$menuData = [
     'section_name' => 'Our Services',
     'items' => []
 ];
+
+// If we have sections, get products for the first section
+if ($sectionsData && !empty($sectionsData)) {
+    $firstSection = $sectionsData[0];
+    $menuData['section_name'] = $firstSection['name_section'];
+    
+    $productsData = supabaseQuery(
+        'products',
+        'name_product,description_product,price_product',
+        [
+            'id_section' => "eq.{$firstSection['id_section']}",
+            'order' => 'created_at_product.asc'
+        ]
+    );
+    
+    if ($productsData && !empty($productsData)) {
+        $menuData['items'] = $productsData;
+    }
+}
 
 ?>
 <!DOCTYPE html>
@@ -603,12 +525,6 @@ $menuData = $sampleMenus[$omf_id] ?? [
             color: var(--accent-color);
         }
 
-        .action-btn-hero.secondary {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.3);
-        }
-
         .action-btn-hero:hover {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(0,0,0,0.3);
@@ -636,6 +552,7 @@ $menuData = $sampleMenus[$omf_id] ?? [
             font-size: 18px;
             text-align: center;
             transition: all 0.4s ease;
+            overflow: hidden;
         }
 
         .hero-image-placeholder:hover {
@@ -682,6 +599,7 @@ $menuData = $sampleMenus[$omf_id] ?? [
             font-size: 18px;
             max-width: 600px;
             margin: 0 auto;
+            line-height: 1.6;
         }
 
         .menu-grid {
@@ -737,7 +655,7 @@ $menuData = $sampleMenus[$omf_id] ?? [
         }
 
         /* Empty State */
-        .empty-state {
+        .coming-soon {
             text-align: center;
             padding: 60px 20px;
             background: var(--bg-tertiary);
@@ -745,13 +663,13 @@ $menuData = $sampleMenus[$omf_id] ?? [
             border: 2px dashed var(--border-color);
         }
 
-        .empty-state h3 {
+        .coming-soon h3 {
             color: var(--text-secondary);
             margin-bottom: 15px;
             font-size: 24px;
         }
 
-        .empty-state p {
+        .coming-soon p {
             color: var(--text-muted);
             font-size: 16px;
         }
@@ -808,7 +726,6 @@ $menuData = $sampleMenus[$omf_id] ?? [
                 <button class="theme-toggle" id="themeToggle">
                     <span class="theme-icon">🌙</span>
                 </button>
-                <a href="tel:<?php echo htmlspecialchars($business['phone_business'] ?? ''); ?>" class="action-btn secondary">📞 Call</a>
                 <a href="https://make.openmenuformat.com" target="_blank" class="action-btn secondary">📱 Create Menu</a>
             </div>
         </div>
@@ -822,63 +739,62 @@ $menuData = $sampleMenus[$omf_id] ?? [
                 <div class="business-type"><?php echo htmlspecialchars($business['business_type']); ?></div>
                 <h1><?php echo htmlspecialchars($business['name_business']); ?></h1>
                 <p class="business-description"><?php echo htmlspecialchars($business['description_business']); ?></p>
+                
                 <div class="business-meta">
                     <div class="meta-item">📍 <?php echo htmlspecialchars($business['address_business']); ?></div>
-                    <div class="meta-item">⭐ 4.8 (324 reviews)</div>
-                    <div class="meta-item">🕒 Open until 11 PM</div>
+                    <?php if (!empty($business['hours_business'])): ?>
+                    <div class="meta-item">⏰ <?php echo htmlspecialchars($business['hours_business']); ?></div>
+                    <?php endif; ?>
                 </div>
+                
                 <div class="quick-actions">
-                    <a href="tel:<?php echo htmlspecialchars($business['phone_business'] ?? ''); ?>" class="action-btn-hero primary">📞 Call Now</a>
-                    <button class="action-btn-hero secondary" onclick="scrollToMenu()">📋 View Menu</button>
-                    <button class="action-btn-hero secondary" onclick="handleDirections()">📍 Directions</button>
+                    <button class="action-btn-hero primary" onclick="handleDirections()">🧭 Directions</button>
                 </div>
             </div>
             
             <div class="hero-visual">
                 <div class="hero-image-placeholder">
-    <?php if (!empty($business['image_business'])): ?>
-        <img src="<?php echo htmlspecialchars($business['image_business']); ?>" 
-             alt="<?php echo htmlspecialchars($business['name_business']); ?>"
-             style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;">
-    <?php else: ?>
-        📸 Hero Image<br>
-        <small style="margin-top: 10px; opacity: 0.8;">(1000x1000px recommended)</small>
-    <?php endif; ?>
-</div>
+                    <?php if (!empty($business['image_business'])): ?>
+                        <img src="<?php echo htmlspecialchars($business['image_business']); ?>" 
+                             alt="<?php echo htmlspecialchars($business['name_business']); ?>"
+                             style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;">
+                    <?php else: ?>
+                        📸 Hero Image<br>
+                        <small style="margin-top: 10px; opacity: 0.8;">(1000x1000px recommended)</small>
+                    <?php endif; ?>
+                </div>
             </div>
         </div>
     </div>
 
     <!-- Menu Container -->
     <div class="container">
-        <div class="menu-section" id="menu">
+        <div class="menu-section" id="services">
             <div class="section-header">
-                <h2 class="section-title"><?php echo htmlspecialchars($menuData['section_name']); ?></h2>
-                <p class="section-subtitle">
-                    Handcrafted with love using the finest ingredients and our signature recipes.
-                </p>
+                <h2 class="section-title">Our Services</h2>
+                <p class="section-subtitle"><?php echo htmlspecialchars($business['description_business']); ?></p>
             </div>
             
-            <div class="menu-grid">
-                <?php if (!empty($menuData['items'])): ?>
+            <?php if (!empty($menuData['items'])): ?>
+                <div class="menu-grid">
                     <?php foreach ($menuData['items'] as $item): ?>
                     <div class="menu-item">
                         <div class="menu-item-header">
                             <div class="menu-item-name"><?php echo htmlspecialchars($item['name_product']); ?></div>
-                            <div class="menu-item-price">₿<?php echo htmlspecialchars($item['price_product']); ?></div>
+                            <div class="menu-item-price">฿<?php echo htmlspecialchars($item['price_product']); ?></div>
                         </div>
                         <div class="menu-item-description">
                             <?php echo htmlspecialchars($item['description_product']); ?>
                         </div>
                     </div>
                     <?php endforeach; ?>
-                <?php else: ?>
-                    <div class="empty-state">
-                        <h3>Menu Coming Soon!</h3>
-                        <p>This business is setting up their delicious menu. Check back soon!</p>
-                    </div>
-                <?php endif; ?>
-            </div>
+                </div>
+            <?php else: ?>
+                <div class="coming-soon">
+                    <h3>Menu Coming Soon!</h3>
+                    <p>This business is setting up their delicious menu. Check back soon!</p>
+                </div>
+            <?php endif; ?>
         </div>
     </div>
 
@@ -919,14 +835,11 @@ $menuData = $sampleMenus[$omf_id] ?? [
         };
 
         // Business Actions
-        function scrollToMenu() {
-            document.getElementById('menu').scrollIntoView({ behavior: 'smooth' });
-        }
-        
         function handleDirections() {
             const businessName = <?php echo json_encode($business['name_business']); ?>;
             const address = <?php echo json_encode($business['address_business']); ?>;
-            window.open(`https://maps.google.com/?q=${encodeURIComponent(businessName + ' ' + address)}`, '_blank');
+            const query = encodeURIComponent(businessName + ' ' + address);
+            window.open(`https://maps.google.com/?q=${query}`, '_blank');
         }
 
         // Initialize theme on page load
