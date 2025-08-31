@@ -46,7 +46,7 @@ function supabaseQuery($table, $select = '*', $filters = []) {
 // Get business data from Supabase
 $businessData = supabaseQuery(
     'business',
-    'id_business,name_business,description_business,address_business,business_type,omfid_slug,image_business,hours_business,phone_business,email_business',
+    'id_business,name_business,description_business,address_business,business_type,omfid_slug,image_business,hours_business',
     [
         'omfid_slug' => "eq.$omf_id",
         'moderation_status' => "eq.approved"
