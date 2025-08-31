@@ -564,6 +564,7 @@ $trendingBusinesses = supabaseQuery(
         .footer-section h3 {
             margin-bottom: 1rem;
             color: var(--text-primary);
+            text-align: center;
         }
 
         .footer-section a {
