@@ -300,10 +300,32 @@ if ($sectionsData && !empty($sectionsData)) {
 
 /* Footer */
 
+..footer-section {
+    text-align: center;
+}
+
 .footer-section h3 {
     text-align: center;
     margin-bottom: 1rem;
     color: var(--text-primary);
+}
+
+
+.footer-section a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    display: block;
+    margin-bottom: 0.5rem;
+    transition: all var(--transition);
+    text-align: center;
+}
+
+.footer-bottom {
+    text-align: center;
+    padding-top: 2rem;
+    margin-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-secondary);
 }
 
 .footer {
