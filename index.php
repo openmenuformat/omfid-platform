@@ -690,9 +690,16 @@ $trendingBusinesses = supabaseQuery(
                 <h2 class="section-title">✨ Featured This Week</h2>
             </div>
             <div class="featured-carousel">
-               
-            </div>
-        </section>
+               // Get featured businesses (businesses marked as featured)
+$featuredBusinesses = supabaseQuery(
+    'business',
+    'name_business,description_business,omfid_slug',
+    [
+        'moderation_status' => 'eq.approved',
+        'is_featured' => 'eq.true',  // if you add this field later
+        'limit' => '2'
+    ]
+);
 
         <!-- Stats Bar -->
        <?php
