@@ -255,6 +255,12 @@ $sectionsData = supabaseQuery(
     ]
 );
 
+// Add after the sections query
+echo "<script>console.log('Sections found: " . json_encode($sectionsData) . "');</script>";
+echo "<script>console.log('Products found: " . json_encode($productsData ?? []) . "');</script>";
+
+
+
 $menuData = [
     'section_name' => 'Our Services',
     'items' => []
