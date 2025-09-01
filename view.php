@@ -255,11 +255,19 @@ $sectionsData = supabaseQuery(
     ]
 );
 
-// Add after the sections query
+// Get menu data from sections and products
+$sectionsData = supabaseQuery(
+    'sections',
+    'id_section,name_section,description_section',
+    [
+        'id_business' => "eq.{$business['id_business']}",
+        'order' => 'created_at_section.asc'
+    ]
+);
+
+// DEBUG: Add these lines right here
+echo "<script>console.log('Business ID: {$business['id_business']}');</script>";
 echo "<script>console.log('Sections found: " . json_encode($sectionsData) . "');</script>";
-echo "<script>console.log('Products found: " . json_encode($productsData ?? []) . "');</script>";
-
-
 
 $menuData = [
     'section_name' => 'Our Services',
@@ -279,6 +287,19 @@ if ($sectionsData && !empty($sectionsData)) {
             'order' => 'created_at_product.asc'
         ]
     );
+
+$productsData = supabaseQuery(
+        'products',
+        'name_product,description_product,price_product',
+        [
+            'id_section' => "eq.{$firstSection['id_section']}",
+            'order' => 'created_at_product.asc'
+        ]
+    );
+    
+    // DEBUG: Add this line right here
+    echo "<script>console.log('Products found: " . json_encode($productsData) . "');</script>";
+
     
     if ($productsData && !empty($productsData)) {
         $menuData['items'] = $productsData;
