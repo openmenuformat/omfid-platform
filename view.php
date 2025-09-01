@@ -245,25 +245,33 @@ echo "<script>console.log('DEBUG: All slugs in database = " . json_encode($testQ
 
 $business = $businessData[0];
 
-// Get menu data from sections and products
+// Get menu data from sections and products - PUBLIC DISPLAY ONLY
 $sectionsData = supabaseQuery(
     'sections',
     'id_section,name_section,description_section',
     [
         'id_business' => "eq.{$business['id_business']}",
-        'order' => 'created_at_section.asc'
+        'is_public_display' => 'eq.true',  // Only sections marked for public display
+        'limit' => '1'
     ]
 );
 
-// Get menu data from sections and products
-$sectionsData = supabaseQuery(
-    'sections',
-    'id_section,name_section,description_section',
-    [
-        'id_business' => "eq.{$business['id_business']}",
-        'order' => 'created_at_section.asc'
-    ]
-);
+// DEBUG: Check what sections are marked public
+echo "<script>console.log('Public sections found: " . json_encode($sectionsData) . "');</script>";
+
+// FALLBACK: If no public sections, try first section (temporary)
+if (!$sectionsData || empty($sectionsData)) {
+    $sectionsData = supabaseQuery(
+        'sections',
+        'id_section,name_section,description_section',
+        [
+            'id_business' => "eq.{$business['id_business']}",
+            'order' => 'created_at_section.asc',
+            'limit' => '1'
+        ]
+    );
+    echo "<script>console.log('Fallback sections found: " . json_encode($sectionsData) . "');</script>";
+}
 
 // DEBUG: Add these lines right here
 echo "<script>console.log('Business ID: {$business['id_business']}');</script>";
