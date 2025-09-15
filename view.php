@@ -1,4 +1,8 @@
 <?php
+
+function isCurrentUserAdmin() {
+    return isset($_GET['admin_key']) && $_GET['admin_key'] === 'admin123';
+}
 // OMFID Business Viewer - Production Ready
 // Clean version with no sample data, Supabase only
 
@@ -42,7 +46,15 @@ function supabaseQuery($table, $select = '*', $filters = []) {
     
     return json_decode($response, true);
 }
-
+// Admin preview override
+$isAdminPreview = isset($_GET['admin_preview']) && isCurrentUserAdmin();
+if ($isAdminPreview) {
+    // Admin can see any business - skip normal checks
+} elseif (!$business['omfid_published'] || $business['moderation_status'] !== 'approved') {
+    // Normal users: only show if published AND approved
+    header("Location: /");
+    exit;
+}
 // Get business data from Supabase
 $businessData = supabaseQuery(
     'business',
@@ -915,7 +927,7 @@ $productsData = supabaseQuery(
             <?php else: ?>
                 <div class="coming-soon">
                     <h3>Menu Coming Soon!</h3>
-                    <p>This business is setting up their delicious menu. Check back soon!</p>
+                    <p>This business is setting up their menu. Check back soon!</p>
                 </div>
             <?php endif; ?>
         </div>
