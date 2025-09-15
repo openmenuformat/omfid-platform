@@ -927,7 +927,7 @@ $productsData = supabaseQuery(
             <?php else: ?>
                 <div class="coming-soon">
                     <h3>Menu Coming Soon!</h3>
-                    <p>This business is setting up their delicious menu. Check back soon!</p>
+                    <p>This business is setting up their OMF menu. Check back soon!</p>
                 </div>
             <?php endif; ?>
         </div>
