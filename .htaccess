@@ -4,7 +4,7 @@
 RewriteEngine On
 
 # Force HTTPS (uncomment in production)
-# RewriteCond %{HTTPS} off
+# RewriteCond %{HTTPS} off 
 # RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
 
 # Homepage - serve index.php instead of index.html
